@@ -4,8 +4,10 @@
 import time
 import json
 
-from TwitterAPI import TwitterAPI, TwitterError
-from threading import Thread
+from twitter import TwitterStream
+
+from configparser import ConfigParser
+
 from collections import deque
 from flask import (Flask, redirect, url_for, send_file, render_template,
                    Response, request)
@@ -88,34 +90,26 @@ def stream():
             if sub.startswith('jonny'):
                 json_o['action'].append('jonny2')
 
-                return Response(
-                    json.dumps(json_o),
-                    mimetype='application/json')
+    return Response(
+        json.dumps(json_o),
+        mimetype='application/json')
 
 
-def handle_twitter():
-
-    api = TwitterAPI(
-        consumer_key,
-        consumer_secret,
-        access_token_key,
-        access_token_secret)
-
-    while True:
-        try:
-
-            response = api.request('statuses/filter', {'track': searchstring})
-            for item in response.get_iterator():
-                if 'text' in item:
-                    ring_buffer.append((item, time.time()))
-
-        except TwitterError.TwitterError:
-            print('Stream error!')
-            time.sleep(10)
-            print('Restart stream.')
+def handle_twitter(item, the_time):
+    ring_buffer.append((item, the_time))
+    print(item)
 
 
 if __name__ == "__main__":
-    t = Thread(target=handle_twitter)
-    t.start()
+    config = ConfigParser()
+    config.read('config.ini')
+
+    twitter_stream = TwitterStream(config.get('Twitter', 'consumer_key'),
+                                   config.get('Twitter', 'consumer_secret'),
+                                   config.get('Twitter', 'access_token_key'),
+                                   config.get('Twitter', 'access_token_secret'),
+                                   track='#KoMa77', follow=None)
+    twitter_stream.add_data_hook(handle_twitter)
+    twitter_stream.start()
+
     app.run(host='0.0.0.0', port=5001)
