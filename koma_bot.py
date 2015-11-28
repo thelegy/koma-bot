@@ -13,7 +13,7 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
                    Response, request)
 
 
-version = 3
+VERSION = 3
 
 app = Flask(__name__, template_folder='')
 
@@ -40,7 +40,7 @@ def soundboard():
 def script():
     return render_template(
         'script.js',
-        version=version,
+        version=VERSION,
         time=time.time())
 
 
