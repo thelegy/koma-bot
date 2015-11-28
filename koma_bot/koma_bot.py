@@ -93,7 +93,7 @@ def handle_twitter(item, the_time):
     print(item)
 
 
-if __name__ == "__main__":
+def create_app():
     config = ConfigParser()
     config.read('config.ini')
     twitter = config['Twitter']
@@ -108,3 +108,8 @@ if __name__ == "__main__":
 
     app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
             port=config.get('Web', 'port', fallback=5001))
+    return app
+
+
+if __name__ == "__main__":
+    create_app()
