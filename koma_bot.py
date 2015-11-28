@@ -15,13 +15,6 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
 
 version = 3
 
-consumer_key = '#'
-consumer_secret = '#'
-access_token_key = '#'
-access_token_secret = '#'
-
-searchstring = '#KoMa77'
-
 app = Flask(__name__, template_folder='')
 
 ring_buffer = deque(maxlen=20)
@@ -103,13 +96,15 @@ def handle_twitter(item, the_time):
 if __name__ == "__main__":
     config = ConfigParser()
     config.read('config.ini')
-
-    twitter_stream = TwitterStream(config.get('Twitter', 'consumer_key'),
-                                   config.get('Twitter', 'consumer_secret'),
-                                   config.get('Twitter', 'access_token_key'),
-                                   config.get('Twitter', 'access_token_secret'),
-                                   track='#KoMa77', follow=None)
+    twitter = config['Twitter']
+    twitter_stream = TwitterStream(twitter.get('consumer_key'),
+                                   twitter.get('consumer_secret'),
+                                   twitter.get('access_token_key'),
+                                   twitter.get('access_token_secret'),
+                                   track=twitter.get('track', '#KoMa77'),
+                                   follow=twitter.get('follow'))
     twitter_stream.add_data_hook(handle_twitter)
     twitter_stream.start()
 
-    app.run(host='0.0.0.0', port=5001)
+    app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
+            port=config.get('Web', 'port', fallback=5001))
