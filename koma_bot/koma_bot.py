@@ -62,26 +62,7 @@ def stream():
     for i in json_o['tweets']:
         if i['retweeted']:
             pass
-        for pos in range(len(i['text'])):
-            sub = i['text'].lower()[pos:]
-            if sub.startswith('roh, man'):
-                json_o['action'].append('roman')
-            if sub.startswith('roman'):
-                json_o['action'].append('roman')
-            if sub.startswith('game'):
-                json_o['action'].append('zonk')
-            if sub.startswith('spiel'):
-                json_o['action'].append('zonk')
-            if sub.startswith('lost'):
-                json_o['action'].append('zonk')
-            if sub.startswith('ananas'):
-                json_o['action'].append('ananas')
-            if sub.startswith('orga'):
-                json_o['action'].append('orga')
-            if sub.startswith('ponny'):
-                json_o['action'].append('jonny1')
-            if sub.startswith('jonny'):
-                json_o['action'].append('jonny2')
+        json_o['action'].extend(actions_for(i['text']))
 
     return Response(
         json.dumps(json_o),
@@ -93,21 +74,50 @@ def handle_twitter(item, the_time):
     print(item)
 
 
-def create_app():
+def actions_for(text):
+    actions = []
+    for pos in range(len(text)):
+        sub = text.lower()[pos:]
+        if sub.startswith('roh, man'):
+            actions.append('roman')
+        if sub.startswith('roman'):
+            actions.append('roman')
+        if sub.startswith('game'):
+            actions.append('zonk')
+        if sub.startswith('spiel'):
+            actions.append('zonk')
+        if sub.startswith('lost'):
+            actions.append('zonk')
+        if sub.startswith('ananas'):
+            actions.append('ananas')
+        if sub.startswith('orga'):
+            actions.append('orga')
+        if sub.startswith('ponny'):
+            actions.append('jonny1')
+        if sub.startswith('jonny'):
+            actions.append('jonny2')
+    return actions
+
+
+def create_app(testing=False):
     config = ConfigParser()
     config.read('config.ini')
-    twitter = config['Twitter']
-    twitter_stream = TwitterStream(twitter.get('consumer_key'),
-                                   twitter.get('consumer_secret'),
-                                   twitter.get('access_token_key'),
-                                   twitter.get('access_token_secret'),
-                                   track=twitter.get('track', '#KoMa77'),
-                                   follow=twitter.get('follow'))
-    twitter_stream.add_data_hook(handle_twitter)
-    twitter_stream.start()
 
-    app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
-            port=config.get('Web', 'port', fallback=5001))
+    if testing:
+        app.config['TESTING'] = True
+    else:
+        twitter = config['Twitter']
+        twitter_stream = TwitterStream(twitter.get('consumer_key'),
+                                       twitter.get('consumer_secret'),
+                                       twitter.get('access_token_key'),
+                                       twitter.get('access_token_secret'),
+                                       track=twitter.get('track', '#KoMa77'),
+                                       follow=twitter.get('follow'))
+        twitter_stream.add_data_hook(handle_twitter)
+        twitter_stream.start()
+
+        app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
+                port=config.get('Web', 'port', fallback=5001))
     return app
 
 
