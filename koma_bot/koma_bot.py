@@ -4,7 +4,7 @@
 import time
 import json
 
-from twitter import TwitterStream
+from . twitter import TwitterStream
 
 from configparser import ConfigParser
 
