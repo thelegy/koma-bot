@@ -3,6 +3,7 @@
 
 import time
 import json
+import regex
 
 from . twitter import TwitterStream
 
@@ -14,11 +15,18 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
 
 
 VERSION = 3
+SOUND_TO_TRIGGERS = {'roman': ['roman', 'roh, man',],
+                     'zonk': ['game', 'spiel', 'lost',],
+                     'ananas:': ['ananas'],
+                     'orga': ['orga',],
+                     'ponny': ['jonny1',],
+                     'jonny': ['jonny2',],
+}
 
 app = Flask(__name__, template_folder='')
 
 ring_buffer = deque(maxlen=20)
-
+triggers_to_sounds = {}
 
 @app.route('/<path:path>')
 def default(path):
@@ -76,32 +84,23 @@ def handle_twitter(item, the_time):
 
 def actions_for(text):
     actions = []
-    for pos in range(len(text)):
-        sub = text.lower()[pos:]
-        if sub.startswith('roh, man'):
-            actions.append('roman')
-        if sub.startswith('roman'):
-            actions.append('roman')
-        if sub.startswith('game'):
-            actions.append('zonk')
-        if sub.startswith('spiel'):
-            actions.append('zonk')
-        if sub.startswith('lost'):
-            actions.append('zonk')
-        if sub.startswith('ananas'):
-            actions.append('ananas')
-        if sub.startswith('orga'):
-            actions.append('orga')
-        if sub.startswith('ponny'):
-            actions.append('jonny1')
-        if sub.startswith('jonny'):
-            actions.append('jonny2')
+    for match in app.trigger_regex.finditer(text, overlapped=True):
+        actions.append(triggers_to_sounds[match.group(1)])
     return actions
 
 
 def create_app(testing=False):
     config = ConfigParser()
     config.read('config.ini')
+
+    all_triggers = []
+    for (sound, triggers) in SOUND_TO_TRIGGERS.items():
+        all_triggers.extend([regex.escape(trigger) for trigger in triggers])
+        triggers_to_sounds.update(dict([(trigger, sound)
+                                        for trigger in triggers]))
+
+    re = '(' + '|'.join(all_triggers) + ')'
+    app.trigger_regex = regex.compile(re, regex.IGNORECASE)
 
     if testing:
         app.config['TESTING'] = True
