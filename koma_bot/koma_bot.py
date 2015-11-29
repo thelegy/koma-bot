@@ -1,6 +1,3 @@
-#!/bin/env python3
-
-
 import time
 import json
 import regex
@@ -118,7 +115,3 @@ def create_app(testing=False):
         app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
                 port=config.get('Web', 'port', fallback=5001))
     return app
-
-
-if __name__ == "__main__":
-    create_app()
