@@ -10,6 +10,8 @@ from collections import deque
 from flask import (Flask, redirect, url_for, send_file, render_template,
                    Response, request)
 
+from gevent.wsgi import WSGIServer
+
 
 VERSION = 3
 SOUND_TO_TRIGGERS = {'roman': ['roman', 'roh, man', ],
@@ -113,6 +115,18 @@ def create_app(testing=False):
         twitter_stream.add_data_hook(handle_twitter)
         twitter_stream.start()
 
-        app.run(host=config.get('Web', 'bind_ip', fallback='0.0.0.0'),
-                port=config.get('Web', 'port', fallback=5001))
     return app
+
+
+def create_server(testing=False):
+    config = ConfigParser()
+    config.read('config.ini')
+
+    app = create_app(testing)
+
+    http_server = WSGIServer((
+        config.get('Web', 'bind_ip', fallback='0.0.0.0'),
+        config.get('Web', 'port', fallback=5001)),
+                             app)
+    if not testing:
+        http_server.serve_forever()
