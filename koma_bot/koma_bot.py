@@ -12,18 +12,19 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
 
 
 VERSION = 3
-SOUND_TO_TRIGGERS = {'roman': ['roman', 'roh, man',],
-                     'zonk': ['game', 'spiel', 'lost',],
-                     'ananas:': ['ananas'],
-                     'orga': ['orga',],
-                     'ponny': ['jonny1',],
-                     'jonny': ['jonny2',],
-}
+SOUND_TO_TRIGGERS = {'roman': ['roman', 'roh, man', ],
+                     'zonk': ['game', 'spiel', 'lost', ],
+                     'ananas:': ['ananas', ],
+                     'orga': ['orga', ],
+                     'ponny': ['jonny1', ],
+                     'jonny': ['jonny2', ],
+                     }
 
 app = Flask(__name__, template_folder='')
 
 ring_buffer = deque(maxlen=20)
 triggers_to_sounds = {}
+
 
 @app.route('/<path:path>')
 def default(path):
