@@ -3,6 +3,7 @@ import time
 from TwitterAPI import TwitterAPI, TwitterError
 from threading import Thread
 
+
 class TwitterStream:
     def __init__(self, consumer_key, consumer_secret, access_token_key,
                  access_token_secret, track=None, follow=None):
@@ -18,13 +19,13 @@ class TwitterStream:
         self.__error_hooks = []
 
         self.__live = False
-        
+
         self.__thread = Thread(target=self.__worker)
 
     def __worker(self):
         while self.__live:  # Restart stream when an error occures.
             try:
-                
+
                 response = self.__api.request('statuses/filter',
                                               {'track': self.__track,
                                                'follow': self.__follow})
@@ -40,7 +41,7 @@ class TwitterStream:
                                 print(e.with_traceback(None))
                         if not self.__live:
                             return
-                                
+
             except TwitterError.TwitterError:
                 for hook in self.__error_hooks:
                     try:
