@@ -62,27 +62,30 @@ def stream():
         last_time = time.time()
 
     def gen(last_time):
-        def _gen():
+        while True:
+            tweets = []
             for i in list(ring_buffer):
                 if i[1] >= last_time:
-                    yield i[0]
+                    tweets.append(i[0])
 
-        while True:
-            json_o = {}
-            json_o['timestamp'] = time.time()
-            json_o['tweets'] = list(_gen())
-            json_o['action'] = []
+            if len(tweets) > 0:
 
-            for i in json_o['tweets']:
-                if i['retweeted']:
-                    pass
-                json_o['action'].extend(actions_for(i['text']))
+                json_o = {}
+                json_o['timestamp'] = time.time()
+                json_o['tweets'] = tweets
+                json_o['action'] = []
 
+                for i in tweets:
+                    if i['retweeted']:
+                        pass
+                    json_o['action'].extend(actions_for(i['text']))
+
+                last_time = json_o['timestamp']
+
+                yield json_o
+
+            # temporary; need to replace with event listener
             gevent.sleep(5)
-
-            last_time = json_o['timestamp']
-
-            yield json_o
 
     sse = SSE(gen(last_time), 'timestamp')
 
