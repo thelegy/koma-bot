@@ -39,7 +39,7 @@ class SSE(object):
     def __init__(self, iterator, id_field=''):
         self.__iterator = iterator
         self.__queue = queue.Queue()
-        self.__last_message = time()
+        self.__last_message = time() - self.KEEP_ALIVE_PERIOD
         self.__id_field = id_field
         self.__alive = True
 
