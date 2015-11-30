@@ -3,6 +3,7 @@ import json
 import regex
 
 from . twitter import TwitterStream
+from . sse import SSE
 
 from configparser import ConfigParser
 
@@ -11,6 +12,8 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
                    Response, request)
 
 from gevent.wsgi import WSGIServer
+
+import gevent
 
 
 VERSION = 3
@@ -55,31 +58,41 @@ def script():
 @app.route('/stream/')
 def stream():
     def gen():
-        for i in list(ring_buffer):
-            if i[1] >= last_time:
-                yield i[0]
-    json_o = {}
-    json_o['timestamp'] = time.time()
-    try:
-        last_time = float(request.args.get('last_request'))
-    except:
-        last_time = 0
-    json_o['tweets'] = list(gen())
-    json_o['action'] = []
+        def _gen():
+            for i in list(ring_buffer):
+                if i[1] >= last_time:
+                    yield i[0]
+        try:
+            last_time = float(request.args.get('last_request'))
+        except:
+            last_time = 0
 
-    for i in json_o['tweets']:
-        if i['retweeted']:
-            pass
-        json_o['action'].extend(actions_for(i['text']))
+        while True:
+            json_o = {}
+            json_o['timestamp'] = time.time()
+            json_o['tweets'] = list(_gen())
+            json_o['action'] = []
+
+            for i in json_o['tweets']:
+                if i['retweeted']:
+                    pass
+                json_o['action'].extend(actions_for(i['text']))
+
+            gevent.sleep(5)
+
+            last_time = json_o['timestamp']
+
+            yield json_o
+
+    sse = SSE(gen())
 
     return Response(
-        json.dumps(json_o),
-        mimetype='application/json')
+        sse.output(),
+        mimetype='text/event-stream')
 
 
 def handle_twitter(item, the_time):
     ring_buffer.append((item, the_time))
-    print(item)
 
 
 def actions_for(text):
@@ -130,3 +143,5 @@ def create_server(testing=False):
                              app)
     if not testing:
         http_server.serve_forever()
+
+    return http_server
