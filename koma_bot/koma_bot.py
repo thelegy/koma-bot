@@ -51,21 +51,21 @@ def soundboard():
 def script():
     return render_template(
         'script.js',
-        version=VERSION,
-        time=time.time())
+        version=VERSION)
 
 
 @app.route('/stream/')
 def stream():
-    def gen():
+    try:
+        last_time = float(request.headers.get('Last-Event-ID'))
+    except:
+        last_time = time.time()
+
+    def gen(last_time):
         def _gen():
             for i in list(ring_buffer):
                 if i[1] >= last_time:
                     yield i[0]
-        try:
-            last_time = float(request.args.get('last_request'))
-        except:
-            last_time = 0
 
         while True:
             json_o = {}
@@ -84,7 +84,7 @@ def stream():
 
             yield json_o
 
-    sse = SSE(gen())
+    sse = SSE(gen(last_time), 'timestamp')
 
     return Response(
         sse.output(),

@@ -1,5 +1,4 @@
 var script_version = '{{ version }}';
-var last_request = '{{ time }}';
 
 function create_audio_element () {
     o = document.createElement('audio');

@@ -9,10 +9,14 @@ class SSE(object):
 
     class Message(object):
 
-        def __init__(self, data):
+        def __init__(self, data, id_field=''):
             self.__data = data
+            self.__id = None
+            # TODO: this is kind of ugly, needs mor work
+            if type(data) is dict and id_field in data:
+                self.__id = data[id_field]
 
-        def __str__(self):
+        def __the_data(self):
             if self.__data is None:
                 # Keep-Alive signal
                 return ':\n\n'
@@ -24,15 +28,24 @@ class SSE(object):
             # Everything else
             return 'data: ' + dumps(self.__data) + '\n\n'
 
-    def __init__(self, iterator):
+        def __the_id(self):
+            if self.__id is not None:
+                return 'id: ' + str(self.__id) + '\n'
+            return ''
+
+        def __str__(self):
+            return self.__the_id() + self.__the_data()
+
+    def __init__(self, iterator, id_field=''):
         self.__iterator = iterator
         self.__queue = queue.Queue()
         self.__last_message = time()
+        self.__id_field = id_field
         self.__alive = True
 
     def __iterate(self):
         for item in self.__iterator:
-            self.__queue.put(self.Message(item))
+            self.__queue.put(self.Message(item, self.__id_field))
         self.__queue.put(StopIteration)
 
     def __keep_alive_signal(self):
