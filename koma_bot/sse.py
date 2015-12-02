@@ -56,8 +56,8 @@ class SSE(object):
             sleep(max(0, self.KEEP_ALIVE_PERIOD - seconds_passed))
 
     def output(self):
-        spawn(self.__iterate)
         spawn(self.__keep_alive_signal)
+        spawn(self.__iterate)
 
         for message in self.__queue:
             self.__last_message = time()

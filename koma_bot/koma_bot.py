@@ -12,8 +12,8 @@ from flask import (Flask, redirect, url_for, send_file, render_template,
                    Response, request)
 
 from gevent.wsgi import WSGIServer
-
-import gevent
+from gevent.event import Event
+from gevent import idle, Timeout, spawn, sleep
 
 
 VERSION = 3
@@ -70,8 +70,10 @@ def stream():
 
             if len(tweets) > 0:
 
+                last_time = time.time()
+
                 json_o = {}
-                json_o['timestamp'] = time.time()
+                json_o['timestamp'] = last_time
                 json_o['tweets'] = tweets
                 json_o['action'] = []
 
@@ -80,12 +82,9 @@ def stream():
                         pass
                     json_o['action'].extend(actions_for(i['text']))
 
-                last_time = json_o['timestamp']
-
                 yield json_o
 
-            # temporary; need to replace with event listener
-            gevent.sleep(5)
+            event.wait()
 
     sse = SSE(gen(last_time), 'timestamp')
 
@@ -96,6 +95,8 @@ def stream():
 
 def handle_twitter(item, the_time):
     ring_buffer.append((item, the_time))
+    event.set()
+    event.clear()
 
 
 def actions_for(text):
@@ -134,9 +135,28 @@ def create_app(testing=False):
     return app
 
 
+# This is TOO UGLY. Actually it is needed, because gevent has some kind of main
+# loop and schedules things beforehand. It then waits for some external events
+# and schedules the next "wakeup" in quite some time in the futute. When we
+# receive an event from TwitterAPI, wich is running in a different thread I do
+# not see a way no notify gevent to reschedule its things, so the event can
+# actually be processed in the greenlets.
+# This sleep loop keeps gevent from scheduling the next wakeup more than a
+# quater second in the future yielding a drastically decreased response time.
+# If you know a way, how to do this different in any way (that would be almost
+# cerainly a cleaner one) please, PLEASE fix it!
+def gevent_fix():
+    while True:
+        sleep(.25)
+
+
 def create_server(testing=False):
     config = ConfigParser()
     config.read('config.ini')
+
+    # not scalable; needs a better aproach
+    global event
+    event = Event()
 
     app = create_app(testing)
 
@@ -145,6 +165,7 @@ def create_server(testing=False):
         config.get('Web', 'port', fallback=5001)),
                              app)
     if not testing:
-        http_server.serve_forever()
+        spawn(gevent_fix)
 
-    return http_server
+        # this consumes the thread
+        http_server.serve_forever()
