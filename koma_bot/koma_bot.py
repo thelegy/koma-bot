@@ -102,7 +102,7 @@ def handle_twitter(item, the_time):
 def actions_for(text):
     actions = []
     for match in app.trigger_regex.finditer(text, overlapped=True):
-        actions.append(triggers_to_sounds[match.group(1)])
+        actions.append(triggers_to_sounds[match.group(1).lower()])
     return actions
 
 
