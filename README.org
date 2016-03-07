@@ -1,0 +1,2 @@
+* koma-bot
+A Twitter wall dedicated, or at least programmed, for the KoMa.
