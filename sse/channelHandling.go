@@ -36,17 +36,17 @@ func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{
 	for {
 		timeout := time.After(120 * time.Second)
 		var (
-			event         interface{}
-			channelClosed bool
+			event       interface{}
+			channelOpen bool
 		)
 		event = nil
-		channelClosed = false
+		channelOpen = true
 		select {
 		case <-timeout:
-		case event, channelClosed = <-c:
+		case event, channelOpen = <-c:
 		}
 
-		if channelClosed {
+		if !channelOpen {
 			close(done)
 
 			// wait so no new clients come any longer
