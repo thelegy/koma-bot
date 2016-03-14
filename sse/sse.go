@@ -13,7 +13,12 @@ type Provider struct {
 // SSE Client retreiving events
 type Client struct {
 	Channel <-chan interface{} // chan yielding the events
-	Quit    chan<- struct{}    // chan to signal when client is gone
+	quit    chan<- struct{}    // chan to signal when client is gone
+}
+
+// Close the client
+func (client Client) Quit() {
+	close(client.quit)
 }
 
 // Creates a new Provider and starts up the logic
