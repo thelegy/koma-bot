@@ -34,7 +34,6 @@ func createChannels(c chan<- Client, clients *list.List, done <-chan struct{}) {
 // This also triggers the done chan, when c is closed
 func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{}) {
 	for {
-		timeout := time.After(120 * time.Second)
 		var (
 			event       interface{}
 			channelOpen bool
@@ -42,8 +41,8 @@ func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{
 		event = nil
 		channelOpen = true
 		select {
-		case <-timeout:
 		case event, channelOpen = <-c:
+		case <-time.After(120 * time.Second):
 		}
 
 		if !channelOpen {
