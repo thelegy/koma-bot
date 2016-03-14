@@ -2,6 +2,7 @@ package sse
 
 import (
 	"container/list"
+	"sync"
 	"time"
 )
 
@@ -26,6 +27,19 @@ func createChannels(c chan<- Client, clients *list.List, done <-chan struct{}) {
 			close(c)
 			// let gc do something for its money
 			return
+		}
+	}
+}
+
+func sendEvent(event interface{}, client iterClient, wg sync.WaitGroup) {
+	defer wg.Done()
+
+	if event != nil {
+		select {
+		case client.value.channel <- event:
+		case <-time.After(10 * time.Second):
+			// strike
+			client.value.strikes++
 		}
 	}
 }
@@ -60,6 +74,7 @@ func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{
 		}
 
 		// channel is still open
+		var wg sync.WaitGroup
 		for client := range clientsIter(clients) {
 			select {
 			case <-client.value.quit:
@@ -69,18 +84,17 @@ func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{
 			default:
 			}
 
-			// client has not quit
-			if event != nil {
-				select {
-				case client.value.channel <- event:
-				case <-time.After(100 * time.Millisecond):
-					// strike
-					client.value.strikes++
-					if client.value.strikes >= 5 {
-						client.removeFrom(clients)
-					}
-				}
+			// client has too many strikes
+			if client.value.strikes >= 5 {
+				client.removeFrom(clients)
+				continue
 			}
+
+			// client has not quit
+			wg.Add(1)
+			go sendEvent(event, client, wg)
 		}
+		// wait for the events to be sent
+		wg.Wait()
 	}
 }
