@@ -31,15 +31,15 @@ func createChannels(c chan<- Client, clients *list.List, done <-chan struct{}) {
 	}
 }
 
-func sendEvent(event interface{}, client iterClient, wg sync.WaitGroup) {
+func sendEvent(event interface{}, client *internalClient, wg *sync.WaitGroup) {
 	defer wg.Done()
 
 	if event != nil {
 		select {
-		case client.value.channel <- event:
-		case <-time.After(10 * time.Second):
+		case client.channel <- event:
+		case <-time.After(100 * time.Millisecond):
 			// strike
-			client.value.strikes++
+			client.strikes++
 		}
 	}
 }
@@ -92,7 +92,7 @@ func serveChannels(c <-chan interface{}, clients *list.List, done chan<- struct{
 
 			// client has not quit
 			wg.Add(1)
-			go sendEvent(event, client, wg)
+			go sendEvent(event, client.value, &wg)
 		}
 		// wait for the events to be sent
 		wg.Wait()
