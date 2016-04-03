@@ -56,7 +56,7 @@ type Tweet struct {
 	// RetweetCount         int      `json:"retweet_count"`
 	Retweeted bool `json:"retweeted"`
 	// RetweetedStatus      *Tweet   `json:"retweeted_status"`
-	Source    string `json:"source"`
+	// Source               string   `json:"source"`
 	Text      string `json:"text"`
 	Truncated bool   `json:"truncated"`
 	User      TUser  `json:"user"`
