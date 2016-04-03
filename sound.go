@@ -23,7 +23,7 @@ func (s *Sound) CompileRegexpr() error {
 }
 
 func (s *Sound) GetPosition(t Tweet) [][]int {
-	if s.Retweeted && !t.Retweeted {
+	if s.Retweeted && t.RetweetedStatus == nil {
 		return nil
 	}
 	pos := s.regex.FindAllStringIndex(t.Text, -1)

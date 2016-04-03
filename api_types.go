@@ -54,8 +54,8 @@ type Tweet struct {
 	// InReplyToUserIdStr   string   `json:"in_reply_to_user_id_str"`
 	// Lang                 string   `json:"lang"`
 	// RetweetCount         int      `json:"retweet_count"`
-	Retweeted bool `json:"retweeted"`
-	// RetweetedStatus      *Tweet   `json:"retweeted_status"`
+	// Retweeted            bool     `json:"retweeted"`
+	RetweetedStatus *Tweet `json:"retweeted_status"`
 	// Source               string   `json:"source"`
 	Text      string `json:"text"`
 	Truncated bool   `json:"truncated"`
