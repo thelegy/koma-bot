@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kerwindena/koma_bot/sse"
+	"github.com/kerwindena/koma-bot/sse"
 )
 
 var Debug bool
