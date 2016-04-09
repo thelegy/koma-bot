@@ -42,7 +42,7 @@ func initAPI(engine *gin.Engine) {
 	engine.GET("/api/v1/stream.json", apiStreamJson)
 
 	engine.GET("/ping", func(c *gin.Context) {
-		c.JSON(200, gin.H{
+		c.JSON(http.StatusOK, gin.H{
 			"message": "pong",
 		})
 	})
