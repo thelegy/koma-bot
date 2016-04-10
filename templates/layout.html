@@ -2,15 +2,20 @@
 <html>
   <head>
     <title>KoMa Wall</title>
+    <link rel="stylesheet" href="/static/css/pure/base-min.css">
+    <link rel="stylesheet" href="/static/css/pure/grids-min.css">
+    <link rel="stylesheet" href="/static/css/pure/grids-responsive-min.css">
+    <link rel="stylesheet" href="/static/css/pure/menus-min.css">
+    <link rel="stylesheet" href="/static/css/style.css">
     {{template "additionalHeaders"}}
   </head>
   <body>
-    <div class="heading">
-      <span>
-        KoMa Twitter Wall
-      </span>
-    </div>
-    <div>
+    <nav class="pure-menu pure-menu-horizontal pure-menu-fixed">
+      <a href="#" class="pure-menu-heading">KoMa Twitter Wall</a>
+      <ul>
+      </ul>
+    </nav>
+    <div class="content pure-g">
       {{template "content"}}
     </div>
   </body>
