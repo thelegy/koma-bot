@@ -24,7 +24,7 @@ type TUser struct {
 	// ProfileBackgroundTile          bool     `json:"profile_background_tile"`
 	// ProfileBannerURL               string   `json:"profile_banner_url"`
 	// ProfileImageURL                string   `json:"profile_image_url"`
-	// ProfileImageUrlHttps           string   `json:"profile_image_url_https"`
+	ProfileImageUrlHttps string `json:"profile_image_url_https"`
 	// ProfileLinkColor               string   `json:"profile_link_color"`
 	// ProfileSidebarBorderColor      string   `json:"profile_sidebar_border_color"`
 	// ProfileSidebarFillColor        string   `json:"profile_sidebar_fill_color"`

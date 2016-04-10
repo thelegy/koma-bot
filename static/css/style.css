@@ -1,0 +1,65 @@
+body {
+    background-color: #202020;
+}
+
+nav {
+    background-color: #101015;
+    height: 35px;
+}
+
+nav .pure-menu-heading {
+    color: #A0A0B0;
+    font-weight: bold;
+}
+
+.content {
+    position: absolute;
+    top: 40px;
+    width: 100%;
+}
+
+.tweet {
+    background-color: #A0A0C0;
+    min-height: 50px;
+    margin: 7px;
+    padding: 7px;
+    border-radius: 7px;
+}
+
+.tweet .user {
+    position: absolute;
+}
+
+.tweet .user img {
+    float: left;
+    width: 50px;
+    height: 50px;
+    border-radius: 7px;
+}
+
+.tweet .user a {
+    color: #505050;
+    text-decoration: none;
+    font-size: 9pt;
+}
+
+.tweet .user .name {
+    margin-left: 10px;
+    font-weight: bold;
+    color: black;
+    font-size: 13pt;
+}
+
+.tweet .user a:hover .name {
+    text-decoration: underline;
+}
+
+.tweet .user .screenname {
+    margin-left: -5px;
+}
+
+.tweet .message {
+    margin-top: 25px;
+    margin-bottom: 0px;
+    margin-left: 60px;
+}
