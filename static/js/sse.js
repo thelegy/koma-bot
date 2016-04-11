@@ -1,6 +1,44 @@
 var eventSource = new EventSource("/api/v1/stream.json");
 
+function isElementInViewport(el) {
+    rect = el.getBoundingClientRect();
+
+    return (
+        rect.top >= 0 &&
+            rect.left >= 0 &&
+            rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+            rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+function updateViewport(moveToEnd) {
+    if(moveToEnd) {
+        newestTweet = getNewestTweet();
+        if(newestTweet) {
+            newestTweet.scrollIntoView()
+        }
+    }
+}
+
+function getAllTweets() {
+    return document.querySelectorAll(".tweets .tweet");
+}
+
+function getNewestTweet() {
+    tweets = getAllTweets();
+    if(tweets.length == 0) {
+        return false;
+    }
+    return tweets[tweets.length-1];
+}
+
 function tweetHandler(event) {
+    newestTweet = getNewestTweet();
+    moveToEnd = false;
+    if(newestTweet) {
+        moveToEnd = isElementInViewport(newestTweet);
+    }
+
     tweetTemplate = document.querySelector(".tweet-template .tweet");
     tweet = tweetTemplate.cloneNode(true);
 
@@ -17,6 +55,8 @@ function tweetHandler(event) {
     tweets = document.querySelector(".tweets");
 
     tweets.appendChild(tweet);
+
+    updateViewport(moveToEnd);
 }
 
 function create_audio_element() {
