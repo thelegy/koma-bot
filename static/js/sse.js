@@ -11,11 +11,21 @@ function isElementInViewport(el) {
     );
 }
 
-function updateViewport(moveToEnd) {
-    if(moveToEnd) {
-        newestTweet = getNewestTweet();
-        if(newestTweet) {
-            newestTweet.scrollIntoView()
+function updateViewport() {
+    newestTweet = getNewestTweet();
+    if(newestTweet) {
+        newestTweet.scrollIntoView()
+    }
+}
+
+function deleteOldTweets() {
+    tweets = getAllTweets();
+    length = tweets.length;
+    if(length > 310) {
+        tweetStorage = document.querySelector(".tweets");
+        deleteCount = length - 300;
+        for(i=0; i<deleteCount; i++) {
+            tweetStorage.removeChild(tweets[i]);
         }
     }
 }
@@ -34,9 +44,9 @@ function getNewestTweet() {
 
 function tweetHandler(event) {
     newestTweet = getNewestTweet();
-    moveToEnd = false;
+    isScrolledDown = false;
     if(newestTweet) {
-        moveToEnd = isElementInViewport(newestTweet);
+        isScrolledDown = isElementInViewport(newestTweet);
     }
 
     tweetTemplate = document.querySelector(".tweet-template .tweet");
@@ -56,7 +66,10 @@ function tweetHandler(event) {
 
     tweets.appendChild(tweet);
 
-    updateViewport(moveToEnd);
+    if(isScrolledDown) {
+        updateViewport();
+        deleteOldTweets();
+    }
 }
 
 function create_audio_element() {
