@@ -2,8 +2,8 @@ package main
 
 import (
 	"fmt"
+	"github.com/fsnotify/fsnotify"
 	"github.com/spf13/viper"
-	"gopkg.in/fsnotify.v1"
 	"sync"
 	"time"
 )
