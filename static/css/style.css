@@ -15,7 +15,34 @@ nav .pure-menu-heading {
 .content {
     position: absolute;
     top: 40px;
+    bottom: 0px;
     width: 100%;
+}
+
+.clockcontainer {
+    position: fixed;
+    top: 40px;
+    bottom: 0px;
+    text-align: center;
+}
+
+.clock:before, .clock:after{
+    content: "";
+    display: inline-block;
+    vertical-align: middle;  /* Align inline level elements vertically */
+    height: 100%;
+}
+
+.clock {
+    font-size: 55pt;
+    color: #505055;
+}
+
+.clock span {
+    vertical-align: middle;
+    margin: 0 -.3em;
+    font-weight: bold;
+    color: #A0A0B0;
 }
 
 .tweet {
