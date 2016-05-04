@@ -3,13 +3,11 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"github.com/kerwindena/koma-bot/sse"
+
 	"net/http"
 	"os"
 	"strings"
 )
-
-var Debug bool
-var SSE sse.Provider
 
 type SoundFS struct {
 	fs http.FileSystem
@@ -22,8 +20,8 @@ func (s SoundFS) Open(name string) (http.File, error) {
 	return nil, os.ErrNotExist
 }
 
-func newSoundFS() SoundFS {
-	s := SoundFS{http.Dir(getConfigString("sounds.dir"))}
+func newSoundFS(c *Config) SoundFS {
+	s := SoundFS{http.Dir(c.GetConfigString("sounds.dir"))}
 	return s
 }
 
@@ -32,20 +30,18 @@ func indexPage(c *gin.Context) {
 }
 
 func main() {
-	loadConfig()
+	config := loadConfig()
 
-	Debug = gin.IsDebugging()
-
-	SSE = sse.NewProvider()
-	go twitterListen()
-	go processTweetSounds()
+	sse := sse.NewProvider()
+	go twitterListen(config, sse.EventStream)
+	go processTweetSounds(config, sse)
 
 	router := gin.Default()
 	router.StaticFS("/static", http.Dir("static"))
-	router.StaticFS("/sounds", newSoundFS())
+	router.StaticFS("/sounds", newSoundFS(config))
 	router.LoadHTMLGlob("templates/*")
 
-	initAPI(router)
+	initAPI(sse.NewClients, router)
 
 	router.GET("/", indexPage)
 

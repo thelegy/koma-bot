@@ -7,20 +7,20 @@ import (
 	"time"
 )
 
-func newTwitterApi() *anaconda.TwitterApi {
+func newTwitterApi(conf *Config) *anaconda.TwitterApi {
 
-	anaconda.SetConsumerKey(getConfigString("twitter.login.consumer_key"))
-	anaconda.SetConsumerSecret(getConfigString("twitter.login.consumer_secret"))
+	anaconda.SetConsumerKey(conf.GetConfigString("twitter.login.consumer_key"))
+	anaconda.SetConsumerSecret(conf.GetConfigString("twitter.login.consumer_secret"))
 
-	api := anaconda.NewTwitterApi(getConfigString("twitter.login.access_token_key"),
-		getConfigString("twitter.login.access_token_secret"))
+	api := anaconda.NewTwitterApi(conf.GetConfigString("twitter.login.access_token_key"),
+		conf.GetConfigString("twitter.login.access_token_secret"))
 
 	return api
 }
 
-func newTwitterStream(api *anaconda.TwitterApi) *anaconda.Stream {
+func newTwitterStream(conf *Config, api *anaconda.TwitterApi) *anaconda.Stream {
 	params := url.Values{}
-	params.Set("track", getConfigString("twitter.track"))
+	params.Set("track", conf.GetConfigString("twitter.track"))
 
 	stream := api.PublicStreamFilter(params)
 
@@ -43,7 +43,7 @@ func convertTweet(t anaconda.Tweet) (Tweet, error) {
 	return tweet, nil
 }
 
-func processStream(stream *anaconda.Stream) {
+func processStream(stream *anaconda.Stream, sseEventStream chan<- interface{}) {
 	for message := range stream.C {
 		if t, ok := message.(anaconda.Tweet); ok {
 			tweet, err := convertTweet(t)
@@ -51,20 +51,20 @@ func processStream(stream *anaconda.Stream) {
 				// log here
 				continue
 			}
-			SSE.EventStream <- tweet
+			sseEventStream <- tweet
 		}
 	}
 }
 
-func twitterListen() {
-	api := newTwitterApi()
-	if Debug {
+func twitterListen(conf *Config, sseEventStream chan<- interface{}) {
+	api := newTwitterApi(conf)
+	if conf.IsDebugging() {
 		api.SetLogger(anaconda.BasicLogger)
 	}
 
 	for {
-		stream := newTwitterStream(api)
-		processStream(stream)
+		stream := newTwitterStream(conf, api)
+		processStream(stream, sseEventStream)
 
 		//stream closed, need to wait & restart it
 		<-time.After(60 * time.Second)
