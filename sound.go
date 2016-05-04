@@ -3,6 +3,8 @@ package main
 import (
 	"regexp"
 	"strings"
+
+	"github.com/kerwindena/koma-bot/sse"
 )
 
 type Sound struct {
@@ -33,9 +35,9 @@ func (s *Sound) GetPosition(t Tweet) [][]int {
 	return pos
 }
 
-func tweetSounds(t Tweet) {
+func tweetSounds(conf *Config, sse sse.Provider, t Tweet) {
 	positions := make([]*Sound, len(t.Text)+1)
-	for sound := range iterateSounds() {
+	for sound := range conf.iterateSounds() {
 		pos := sound.GetPosition(t)
 		for _, p := range pos {
 			positions[p[0]] = sound
@@ -45,18 +47,18 @@ func tweetSounds(t Tweet) {
 		if sound == nil {
 			continue
 		}
-		SSE.EventStream <- sound
+		sse.EventStream <- sound
 	}
 }
 
-func processTweetSounds() {
+func processTweetSounds(conf *Config, sse sse.Provider) {
 	for {
-		c := <-SSE.NewClients
+		c := <-sse.NewClients
 		for m := range c.Channel {
 			switch msg := m.(type) {
 			default:
 			case Tweet:
-				tweetSounds(msg)
+				tweetSounds(conf, sse, msg)
 			}
 		}
 	}

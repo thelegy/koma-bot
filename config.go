@@ -2,29 +2,35 @@ package main
 
 import (
 	"fmt"
-	"github.com/fsnotify/fsnotify"
-	"github.com/spf13/viper"
 	"sync"
 	"time"
+
+	"github.com/fsnotify/fsnotify"
+	"github.com/gin-gonic/gin"
+	"github.com/spf13/viper"
 )
 
-var (
+type Config struct {
 	configViper *viper.Viper
 	soundViper  *viper.Viper
-	soundMutex  = sync.RWMutex{}
+	soundMutex  sync.RWMutex
 	soundMap    map[string]*Sound
-)
+}
 
-func iterateSounds() <-chan *Sound {
+func (conf *Config) IsDebugging() bool {
+	return gin.IsDebugging()
+}
+
+func (conf *Config) iterateSounds() <-chan *Sound {
 	sounds := make(chan *Sound)
 	go func(c chan<- *Sound) {
-		soundMutex.RLock()
-		defer soundMutex.RUnlock()
+		conf.soundMutex.RLock()
+		defer conf.soundMutex.RUnlock()
 		defer close(c)
 
 		timeout := time.After(100 * time.Millisecond)
 
-		for _, sound := range soundMap {
+		for _, sound := range conf.soundMap {
 			select {
 			case c <- sound:
 			case <-timeout:
@@ -36,11 +42,11 @@ func iterateSounds() <-chan *Sound {
 	return sounds
 }
 
-func updateSounds() {
+func (conf *Config) updateSounds() {
 	sounds := make(map[string]*Sound)
-	for _, key := range soundViper.AllKeys() {
+	for _, key := range conf.soundViper.AllKeys() {
 		sound := &Sound{}
-		err := soundViper.UnmarshalKey(key, sound)
+		err := conf.soundViper.UnmarshalKey(key, sound)
 		if err != nil {
 			fmt.Println("Sound error:", err) //error handling, no panic
 			continue
@@ -54,39 +60,50 @@ func updateSounds() {
 		sounds[key] = sound
 	}
 
-	soundMutex.Lock()
-	defer soundMutex.Unlock()
+	conf.soundMutex.Lock()
+	defer conf.soundMutex.Unlock()
 
-	soundMap = sounds
+	conf.soundMap = sounds
 }
 
-func soundConfigChanged(event fsnotify.Event) {
-	updateSounds()
+func soundConfigChanged(conf *Config) func(fsnotify.Event) {
+	return func(_ fsnotify.Event) {
+		conf.updateSounds()
+	}
 }
 
-func loadConfig() {
-	configViper = viper.New()
-	configViper.SetConfigName("koma_bot")
-	configViper.AddConfigPath("/etc/koma_bot/")
-	configViper.AddConfigPath(".")
-	err := configViper.ReadInConfig() // Find and read the config file
-	if err != nil {                   // Handle errors reading the config file
+func loadConfig() *Config {
+	conf := &Config{
+		configViper: viper.New(),
+		soundViper:  viper.New(),
+	}
+
+	conf.configViper.SetConfigName("koma_bot")
+	conf.configViper.AddConfigPath("/etc/koma_bot/")
+	conf.configViper.AddConfigPath(".")
+
+	err := conf.configViper.ReadInConfig() // Find and read the config file
+	if err != nil {                        // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 
-	soundViper = viper.New()
-	soundViper.SetConfigName("koma_bot_sounds")
-	soundViper.AddConfigPath("/etc/koma_bot/")
-	soundViper.AddConfigPath(".")
-	err = soundViper.ReadInConfig() // Find and read the config file
-	if err != nil {                 // Handle errors reading the config file
+	conf.soundViper.SetConfigName("koma_bot_sounds")
+	conf.soundViper.AddConfigPath("/etc/koma_bot/")
+	conf.soundViper.AddConfigPath(".")
+
+	err = conf.soundViper.ReadInConfig() // Find and read the config file
+	if err != nil {                      // Handle errors reading the config file
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
-	soundViper.OnConfigChange(soundConfigChanged)
-	soundViper.WatchConfig()
-	updateSounds()
+
+	conf.soundViper.OnConfigChange(soundConfigChanged(conf))
+	conf.soundViper.WatchConfig()
+
+	conf.updateSounds()
+
+	return conf
 }
 
-func getConfigString(name string) string {
-	return configViper.GetString(name)
+func (c *Config) GetConfigString(name string) string {
+	return c.configViper.GetString(name)
 }
