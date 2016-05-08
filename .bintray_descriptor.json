@@ -1,0 +1,20 @@
+{
+    "package": {
+        "name": "koma-bot",
+        "repo": "generic",
+        "subject": "kerwindena",
+        "licenses": ["GPL-3.0"]
+    },
+
+    "version": {
+        "name": "<VERSION_NAME>"
+    },
+
+    "files": [
+        {
+            "includePattern": "<GOPATH>/bin/([^/\.][^/]*)",
+            "uploadPattern": "koma-bot/$1"
+        }
+    ],
+    "publish": true
+}

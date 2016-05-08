@@ -1,1 +1,14 @@
 language: go
+
+before_deploy:
+  - "sed -i \"s|<VERSION_NAME>|${TRAVIS_BUILD_NUMBER}_${TRAVIS_BRANCH}_${TRAVIS_TAG:-dev}|\" .bintray_descriptor.json"
+  - "sed -i \"s|<GOPATH>|${GOPATH}|\" .bintray_descriptor.json"
+
+deploy:
+  provider: bintray
+  file: ".bintray_descriptor.json"
+  user: kerwindena
+  key:
+    secure: TyCifptzy2QJa94nMldsiIF6l1UAF9feU18jliAR/tYfhRdWgleg3HcVXU+3+KKQb8+LEh1bOzncSxDMTtS8HEecdT3BbVssN4gxYRP9HREXZt4eup4l1vcDG+3giczYCFarqr9xQaC88/tBqy970s5B5VdvXDUy8b4Q7OTg1Q62P4RIDWNX0PFb4uRcPokdlSm4PiFybdc/ldbvcabU3kevORQwZ7jcHElDFk8FQCMUOnnvVWgEdiEaiVBJBFuFatl+GZk5ADldUmAICbUAWa31F2k5ilRjDrBBEb0GewicLfReQ/Q0NmErME/vRL6rTFWHwXgNpL2ZqyO4KaOt6YpycP67ZtVjHkuU/bhl0IGdkqx40kxoCub+OgSlDNtt05/GstyBp1ysiqRngLbZWjBLO00ninNlCD14Z5bxkrZx4dA1E/Q7zA3Q8wbdx19wmXnVcQakQWuJ3sm/5Pmv2XNrOBfojOt3ydkDg5PXM/bxYB8V/8usj6vND2H4GE5UGofSR3/DQleFxCgMiVtkfAR9yRijqOta92A2ELTYCpotNLbcOWdTDb6G3nChGjG2wxLhAx+YdTMh1uAEFTDZPbQF1c/uOrX+yWGT3pJKelrCmhjEEuJkYyHqkX+q0ybJoWQ/cM5oS5rB8NRAsjnkD4ufk7F1UbFKJId5D0WENxI=
+  on:
+    all_branches: true
