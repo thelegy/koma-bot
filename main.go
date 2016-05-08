@@ -45,5 +45,5 @@ func main() {
 
 	router.GET("/", indexPage)
 
-	panic(router.Run("localhost:8000"))
+	panic(router.Run("0.0.0.0:8000"))
 }
