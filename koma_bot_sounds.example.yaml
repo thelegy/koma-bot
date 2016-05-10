@@ -1,0 +1,5 @@
+the_name:
+  regex:
+    - "trigger1"
+    - "trigger1"
+  retweeted: True
