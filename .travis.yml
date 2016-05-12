@@ -13,10 +13,10 @@ env:
       - COMMIT=${TRAVIS_COMMIT::8}
 
 after_success:
-  - docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
+  - test $TRAVIS_PULL_REQUEST == "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
   - export TAG=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "latest"; else echo ${TRAVIS_BRANCH}; fi)
   - CGO_ENABLED=0 GOOS=linux go build -a -v -o koma-bot -tags netgo -ldflags '-s' .
   - docker build --file=Dockerfile --tag=${REPO}:${COMMIT} .
   - docker tag ${REPO}:${COMMIT} ${REPO}:${TAG}
   - docker tag ${REPO}:${COMMIT} ${REPO}:travis-${TRAVIS_BUILD_NUMBER}
-  - docker push ${REPO}
+  - test $TRAVIS_PULL_REQUEST == "false" && docker push ${REPO}
