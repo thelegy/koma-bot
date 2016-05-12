@@ -1,0 +1,11 @@
+debug: false
+address: localhost:8000
+sounds:
+  dir: "/etc/koma_bot/sounds"
+twitter:
+  login:
+    consumer_key:
+    consumer_secret:
+    access_token_key:
+    access_token_secret:
+  track: "#hashtag"

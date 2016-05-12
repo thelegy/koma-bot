@@ -6,7 +6,6 @@ import (
 	"time"
 
 	"github.com/fsnotify/fsnotify"
-	"github.com/gin-gonic/gin"
 	"github.com/spf13/viper"
 )
 
@@ -18,7 +17,7 @@ type Config struct {
 }
 
 func (conf *Config) IsDebugging() bool {
-	return gin.IsDebugging()
+	return conf.configViper.GetBool("debug")
 }
 
 func (conf *Config) iterateSounds() <-chan *Sound {
@@ -87,6 +86,8 @@ func loadConfig() *Config {
 		panic(fmt.Errorf("Fatal error config file: %s \n", err))
 	}
 
+	conf.configViper.SetDefault("debug", false)
+
 	conf.soundViper.SetConfigName("koma_bot_sounds")
 	conf.soundViper.AddConfigPath("/etc/koma_bot/")
 	conf.soundViper.AddConfigPath(".")
@@ -104,6 +105,6 @@ func loadConfig() *Config {
 	return conf
 }
 
-func (c *Config) GetConfigString(name string) string {
-	return c.configViper.GetString(name)
+func (conf *Config) GetConfigString(name string) string {
+	return conf.configViper.GetString(name)
 }

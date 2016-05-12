@@ -36,6 +36,10 @@ func main() {
 	go twitterListen(config, sse.EventStream)
 	go processTweetSounds(config, sse)
 
+	if !config.IsDebugging() {
+		gin.SetMode(gin.ReleaseMode)
+	}
+
 	router := gin.Default()
 	router.StaticFS("/static", http.Dir("static"))
 	router.StaticFS("/sounds", newSoundFS(config))
@@ -45,5 +49,9 @@ func main() {
 
 	router.GET("/", indexPage)
 
-	panic(router.Run("localhost:8000"))
+	if len(os.Args) > 1 && os.Args[1] == "--docker" {
+		panic(router.Run("0.0.0.0:8000"))
+	} else {
+		panic(router.Run(config.GetConfigString("address")))
+	}
 }
