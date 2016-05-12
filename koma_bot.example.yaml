@@ -1,3 +1,5 @@
+debug: false
+address: localhost:8000
 sounds:
   dir: "/etc/koma_bot/sounds"
 twitter:

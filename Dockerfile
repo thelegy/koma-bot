@@ -18,4 +18,4 @@ COPY templates /opt/koma-bot/templates/
 
 COPY koma-bot /bin/koma-bot
 
-ENTRYPOINT ["/bin/koma-bot"]
+ENTRYPOINT ["/bin/koma-bot", "--docker"]
