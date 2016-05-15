@@ -22,7 +22,7 @@ after_success:
           -s
           -X main._versionAutomaticBuild=t
           -X main._versionDate=$(date -Iseconds)
-          -X main._versionGitBranch=${$(git symbolic-ref HEAD 2>/dev/null)##refs/heads/}
+          -X main._versionGitBranch=${$(git symbolic-ref HEAD 2>/dev/null||true)##refs/heads/}
           -X main._versionGitHash=$(git rev-parse --short --verify HEAD)
           -X main._versionTravisNumber=${TRAVIS_BUILD_NUMBER}
           -X main._versionTravisId=${TRAVIS_BUILD_ID}
