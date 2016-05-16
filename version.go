@@ -24,12 +24,12 @@ type Version struct {
 	TravisId       string
 }
 
-func getVersionNumber() *Version {
+func getVersion() Version {
 	trueNames := []string{"t", "true", "y", "yes"}
 
 	AutomaticBuild := false
 	GitHash := strings.ToLower(_versionGitHash)
-	GitBranch := "none"
+	GitBranch := _versionGitBranch
 	TravisNumber := 0
 	TravisId := strings.ToLower(_versionTravisId)
 
@@ -40,16 +40,12 @@ func getVersionNumber() *Version {
 		}
 	}
 
-	if _versionGitBranch != "" {
-		GitBranch = _versionGitBranch
-	}
-
 	travisNumber, err := strconv.Atoi(_versionTravisNumber)
 	if err == nil {
 		TravisNumber = travisNumber
 	}
 
-	version := &Version{
+	version := Version{
 		AutomaticBuild: AutomaticBuild,
 		GitHash:        GitHash,
 		GitBranch:      GitBranch,
