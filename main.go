@@ -25,12 +25,17 @@ func newSoundFS(c *Config) SoundFS {
 	return s
 }
 
-func indexPage(c *gin.Context) {
-	c.HTML(http.StatusOK, "home.html", gin.H{})
+func indexPage(v Version) func(*gin.Context) {
+	return func(c *gin.Context) {
+		c.HTML(http.StatusOK, "home.html", gin.H{
+			"Version": v,
+		})
+	}
 }
 
 func main() {
 	config := loadConfig()
+	version := getVersion()
 
 	sse := sse.NewProvider()
 	go twitterListen(config, sse.EventStream)
@@ -47,7 +52,7 @@ func main() {
 
 	initAPI(sse.NewClients, router)
 
-	router.GET("/", indexPage)
+	router.GET("/", indexPage(version))
 
 	if len(os.Args) > 1 && os.Args[1] == "--docker" {
 		panic(router.Run("0.0.0.0:8000"))
