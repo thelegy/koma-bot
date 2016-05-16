@@ -21,7 +21,7 @@
 
         <li class="pure-menu-item">
           {{ if .Version.GitHash }}
-          <a class="pure-menu-link git-version" href="https://github.com/kerwindena/koma-bot/tree/{{ .Version.GitHash }}">
+          <a class="pure-menu-link git-version" target="_blank" href="https://github.com/kerwindena/koma-bot/tree/{{ .Version.GitHash }}">
             {{ if .Version.GitBranch }}
             {{ .Version.GitBranch }}
             {{ else }}
@@ -33,7 +33,7 @@
 
         <li class="pure-menu-item">
           {{ if .Version.TravisId }}
-          <a class="pure-menu-link travis-version" href="https://travis-ci.org/kerwindena/koma-bot/builds/{{ .Version.TravisId }}">
+          <a class="pure-menu-link travis-version" target="_blank" href="https://travis-ci.org/kerwindena/koma-bot/builds/{{ .Version.TravisId }}">
             Travis
             {{ if .Version.TravisNumber }}
             #{{ .Version.TravisNumber }}
