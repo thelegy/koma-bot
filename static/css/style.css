@@ -119,3 +119,14 @@ nav .pure-menu-heading {
     margin-bottom: 0px;
     margin-left: 60px;
 }
+
+.tweet .photo {
+    padding-left: 60px;
+    max-width: calc(100% - 60px);
+    max-height: 550px;
+    object-fit: scale-down;
+    margin-top: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}

@@ -53,6 +53,15 @@ function tweetHandler(event) {
     tweet = tweetTemplate.cloneNode(true);
 
     var data = JSON.parse(event.data);
+    var photo = null;
+
+    for(i in data.entities.Media) {
+        media = data.entities.Media[i];
+        if(media.Type == "photo") {
+            photo = media;
+            break;
+        }
+    }
 
     tweet.querySelector(".message").textContent = data.text;
 
@@ -61,6 +70,10 @@ function tweetHandler(event) {
     user.querySelector(".name").textContent = data.user.name;
     user.querySelector(".screenname").textContent = data.user.screen_name;
     user.querySelector("img").src = data.user.profile_image_url_https;
+
+    if(photo != null) {
+        tweet.querySelector(".photo").src = photo.Media_url_https;
+    }
 
     tweets = document.querySelector(".tweets");
 

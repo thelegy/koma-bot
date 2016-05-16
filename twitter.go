@@ -2,9 +2,11 @@ package main
 
 import (
 	"encoding/json"
-	"github.com/chimeracoder/anaconda"
 	"net/url"
+	"regexp"
 	"time"
+
+	"github.com/chimeracoder/anaconda"
 )
 
 func newTwitterApi(conf *Config) *anaconda.TwitterApi {
@@ -43,9 +45,16 @@ func convertTweet(t anaconda.Tweet) (Tweet, error) {
 	return tweet, nil
 }
 
-func processStream(stream *anaconda.Stream, sseEventStream chan<- interface{}) {
+func processStream(api *anaconda.TwitterApi, stream *anaconda.Stream, sseEventStream chan<- interface{}) {
+	regex, err := regexp.Compile("https?://")
 	for message := range stream.C {
 		if t, ok := message.(anaconda.Tweet); ok {
+			if err == nil && regex.MatchString(t.Text) {
+				// Tweet might contain an image
+				// we need to hydrate the tweet first
+				go hydrateTweet(api, sseEventStream, t.Id)
+				continue
+			}
 			tweet, err := convertTweet(t)
 			if err != nil {
 				// log here
@@ -56,6 +65,20 @@ func processStream(stream *anaconda.Stream, sseEventStream chan<- interface{}) {
 	}
 }
 
+func hydrateTweet(api *anaconda.TwitterApi, sseEventStream chan<- interface{}, tweetId int64) {
+	t, err := api.GetTweet(tweetId, nil)
+	if err != nil {
+		// log here
+		return
+	}
+	tweet, err := convertTweet(t)
+	if err != nil {
+		// log here
+		return
+	}
+	sseEventStream <- tweet
+}
+
 func twitterListen(conf *Config, sseEventStream chan<- interface{}) {
 	api := newTwitterApi(conf)
 	if conf.IsDebugging() {
@@ -64,7 +87,7 @@ func twitterListen(conf *Config, sseEventStream chan<- interface{}) {
 
 	for {
 		stream := newTwitterStream(conf, api)
-		processStream(stream, sseEventStream)
+		processStream(api, stream, sseEventStream)
 
 		//stream closed, need to wait & restart it
 		<-time.After(60 * time.Second)
