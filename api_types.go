@@ -1,5 +1,9 @@
 package main
 
+import (
+	"github.com/chimeracoder/anaconda"
+)
+
 const (
 	MessageNone  = "none"
 	MessageTweet = "tweet"
@@ -41,11 +45,51 @@ type TUser struct {
 	// WithheldScope                  string   `json:"withheld_scope"`
 }
 
+type TEntityMedia struct {
+	Id int64
+	// Id_str               string
+	Media_url       string
+	Media_url_https string
+	// Url                  string
+	// Display_url          string
+	// Expanded_url         string
+	Sizes anaconda.MediaSizes
+	// Source_status_id     int64
+	// Source_status_id_str string
+	Type    string
+	Indices []int
+	// VideoInfo            anaconda.VideoInfo `json:"video_info"`
+}
+
+type TEntities struct {
+	Hashtags []struct {
+		Indices []int
+		Text    string
+	}
+	Urls []struct {
+		Indices      []int
+		Url          string
+		Display_url  string
+		Expanded_url string
+	}
+	Url           anaconda.UrlEntity
+	User_mentions []struct {
+		Name        string
+		Indices     []int
+		Screen_name string
+		Id          int64
+		Id_str      string
+	}
+	Media []TEntityMedia
+}
+
 type Tweet struct {
 	CreatedAt     string `json:"created_at"`
 	FavoriteCount int    `json:"favorite_count"`
 	// FilterLevel          string   `json:"filter_level"`
-	Id int64 `json:"id"`
+	Id       int64     `json:"id"`
+	Entities TEntities `json:"entities"`
+	// ExtendedEntities     Entities `json:"extended_entities"`
 	// IdStr                string   `json:"id_str"`
 	// InReplyToScreenName  string   `json:"in_reply_to_screen_name"`
 	// InReplyToStatusID    int64    `json:"in_reply_to_status_id"`

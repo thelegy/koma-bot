@@ -16,29 +16,30 @@ nav .pure-menu-heading {
     text-align: right;
 }
 
+.info .pure-menu-link {
+    opacity: .3;
+    color: white;
+}
+
+.info .pure-menu-link:hover {
+    background-color: inherit;
+    opacity: .5;
+}
+
+.info .pure-menu-link:focus {
+    background-color: inherit;
+}
+
 .git-version {
     background-image: url("/static/image/GitHub-Mark-Light-32px.png");
     background-repeat: no-repeat;
     background-size: 20px auto;
     background-position: 0px 50%;
-    color: white;
     padding-left: 24px;
-    opacity: .3;
 }
 
-.git-version:hover {
-    background-color: inherit;
-    opacity: .5;
 }
 
-.travis-version {
-    color: white;
-    opacity: .3;
-}
-
-.travis-version:hover {
-    background-color: inherit;
-    opacity: .5;
 }
 
 .content {
@@ -75,7 +76,7 @@ nav .pure-menu-heading {
 }
 
 .tweet {
-    background-color: #A0A0C0;
+    background-color: #A0A0B0;
     min-height: 50px;
     margin: 7px;
     padding: 7px;
@@ -118,4 +119,15 @@ nav .pure-menu-heading {
     margin-top: 25px;
     margin-bottom: 0px;
     margin-left: 60px;
+}
+
+.tweet .photo {
+    padding-left: 60px;
+    max-width: calc(100% - 60px);
+    max-height: 550px;
+    object-fit: scale-down;
+    margin-top: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
 }
