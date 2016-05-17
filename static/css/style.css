@@ -4,6 +4,7 @@ body {
 
 nav {
     background-color: #101015;
+    border-bottom: 1px solid #505055;
     height: 35px;
 }
 
@@ -16,7 +17,20 @@ nav .pure-menu-heading {
     text-align: right;
 }
 
-.info .pure-menu-link {
+.info > li > a,
+.settings-button span,
+.settings-button span::before,
+.settings-button span::after,
+.settings-box {
+    -webkit-transition: all 0.4s;
+    -moz-transition: all 0.4s;
+    -ms-transition: all 0.4s;
+    -o-transition: all 0.4s;
+    transition: all 0.4s;
+}
+
+.info .pure-menu-link,
+.info .pure-menu-separator {
     opacity: .3;
     color: white;
 }
@@ -38,8 +52,84 @@ nav .pure-menu-heading {
     padding-left: 24px;
 }
 
+.settings-button {
+    text-align: left;
+    margin-left: auto;
+    width: 15px;
+    margin-bottom: -3px;
+    cursor: pointer;
 }
 
+.settings-button::after {
+    content: "" !important;
+}
+
+.settings-button span {
+    display: block;
+    position: relative;
+    top: 7px;
+}
+
+.settings-button span::before,
+.settings-button span::after {
+    content: " ";
+    position: absolute;
+    top: -8px;
+}
+
+.settings-button span::after {
+    top: 8px;
+}
+
+.settings-button span,
+.settings-button span::before,
+.settings-button span::after {
+    background-color: white;
+    width: 20px;
+    height: 3px;
+}
+
+.settings-button.active span{
+    background-color: transparent;
+}
+
+.settings-button.active span::before{
+    -webkit-transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+    -moz-transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+    -ms-transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+    -o-transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+    transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+}
+
+.settings-button.active span::after{
+    -webkit-transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+    -moz-transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+    -ms-transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+    -o-transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+    transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+}
+
+.settings-box.active {
+    right: 0px;
+}
+
+.settings-box {
+    display: block;
+    width: 300px !important;
+    position: fixed !important;
+    left: auto !important;
+    right: -301px;
+    background-color: #101015;
+    color: #A0A0B0;
+    border: 1px solid #505055;
+    border-top: none;
+    border-right: none;
+    text-align: left;
+}
+
+.settings-box > span,
+.settings-box div > span {
+    display: block;
 }
 
 .content {
