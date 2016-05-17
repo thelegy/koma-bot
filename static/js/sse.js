@@ -72,6 +72,7 @@ function tweetHandler(event) {
     user.querySelector("img").src = data.user.profile_image_url_https;
 
     if(photo != null) {
+        tweet.querySelector(".photo").style = "height: " + (tweet.querySelector(".photo").ownerDocument || document).defaultView.getComputedStyle(tweet.querySelector(".photo"), null).getPropertyValue("max-height");
         tweet.querySelector(".photo").src = photo.Media_url_https;
     }
 
@@ -83,6 +84,10 @@ function tweetHandler(event) {
         updateViewport();
         deleteOldTweets();
     }
+}
+
+function photo_onload(e) {
+    e.removeAttribute("style")
 }
 
 function create_audio_element() {
