@@ -115,21 +115,143 @@ nav .pure-menu-heading {
 
 .settings-box {
     display: block;
-    width: 300px !important;
+    width: 292px !important;
     position: fixed !important;
     left: auto !important;
-    right: -301px;
+    right: -300px;
     background-color: #101015;
     color: #A0A0B0;
     border: 1px solid #505055;
     border-top: none;
     border-right: none;
     text-align: left;
+    padding: 4px;
 }
 
-.settings-box > span,
-.settings-box div > span {
+.settings-box .heading {
     display: block;
+    font-size-adjust: .8;
+    font-weight: bolder;
+}
+
+.settings-box > div {
+    border-top: 1px solid #505055;
+    margin-top: 7px;
+    padding: 4px 0;
+}
+
+.settings-box > div > span {
+    display: block;
+}
+
+.settings-box .volume .volume-control {
+    vertical-align: middle;
+    height: 25px;
+}
+
+.volume-icon::before {
+    position: absolute;
+    top: 50%;
+    left: -2px;
+    border: 7px solid transparent;
+    border-right-color: #A0A0B0;
+    content: " ";
+    margin-top: -7px;
+}
+
+.volume-icon::after {
+    position: absolute;
+    top: 50%;
+    left: 4px;
+    height: 6px;
+    width: 4px;
+    background-color: #A0A0B0;
+    content: " ";
+    margin-top: -3px;
+}
+
+.volume-min,
+.volume-max {
+    position: relative;
+    display: inline-block;
+    width: 18px;
+    bottom: calc((100% - 2px) / 2);
+}
+
+.volume-min::before,
+.volume-max::before,
+.volume-max::after{
+    position: absolute;
+    border: 1px solid #A0A0B0;
+    border-radius: 0 15px 0 0;
+    border-width: 1px 1px 0 0;
+    width: 5px;
+    height: 5px;
+    margin-top: -3px;
+    left: 12px;
+    transform: rotate(45deg);
+    content: " ";
+}
+
+.volume-max::after {
+    width: 9px;
+    height: 9px;
+    margin-top: -5px;
+    left: 13px;
+}
+
+.settings-box .volume-control input {
+    background: transparent;
+    width: calc(100% - 55px);
+}
+
+.settings-box .volume-control input::-moz-range-track {
+    background: linear-gradient(to bottom, transparent 0%,#5F5F5F 47%,#5F5F5F 68%,#5F5F5F 79%,transparent 100%);
+    height: 10px;
+    border-radius: 5px;
+}
+.settings-box .volume-control input::-ms-fill-upper {
+    background: linear-gradient(to bottom, transparent 0%,#5F5F5F 47%,#5F5F5F 68%,#5F5F5F 79%,transparent 100%);
+    height: 10px;
+    border-radius: 5px;
+}
+.settings-box .volume-control input::-moz-range-progress {
+    background: linear-gradient(to bottom, transparent 0%,#165cad 47%,#2f9aed 68%,#165cad 79%,transparent 100%);
+    height: 10px;
+    border-radius: 5px;
+}
+.settings-box .volume-control input::-ms-fill-lower {
+    background: linear-gradient(to bottom, transparent 0%,#165cad 47%,#2f9aed 68%,#165cad 79%,transparent 100%);
+    height: 10px;
+    border-radius: 5px;
+}
+
+.settings-box .volume-control input::-webkit-slider-thumb {
+    -webkit-appearance: none !important;
+    background: radial-gradient(#2f9aed 0%, #2f9aed 2%, #165cad 30%, #5F5F5F 35%, #5F5F5F 55%, #7F7F7F 60%, transparent 70%);
+    height: 18px;
+    width: 18px;
+    border: none;
+    border-radius: 0;
+    cursor:pointer;
+}
+.settings-box .volume-control input::-moz-range-thumb {
+    -moz-appearance: none;
+    background: radial-gradient(#2f9aed 0%, #2f9aed 2%, #165cad 30%, #5F5F5F 35%, #5F5F5F 55%, #7F7F7F 60%, transparent 70%);
+    height: 18px;
+    width: 18px;
+    border: none;
+    border-radius: 0;
+    cursor:pointer;
+}
+.settings-box .volume-control input::-ms-thumb {
+    -webkit-appearance: none !important;
+    background: radial-gradient(#2f9aed 0%, #2f9aed 2%, #165cad 30%, #5F5F5F 35%, #5F5F5F 55%, #7F7F7F 60%, transparent 70%);
+    height: 18px;
+    width: 18px;
+    border: none;
+    border-radius: 0;
+    cursor:pointer;
 }
 
 .content {

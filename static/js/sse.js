@@ -109,6 +109,7 @@ function play_next() {
         if (to_play.length > 0) {
             audioElement.src = '/sounds/' + to_play.shift() + '.wav';
             audioElement.load();
+            audioElement.volume = volume / 100.0;
             audioElement.play();
         }
     }

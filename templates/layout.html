@@ -50,7 +50,20 @@
             <span></span>
           </a>
           <div class="pure-menu-children settings-box">
-            <span class="">Settings</span>
+            <span class="heading">Settings</span>
+            <div class="volume">
+              <span>Volume</span>
+              <span class="volume-control">
+                <span class="volume-min">
+                  <span class="volume-icon"></span>
+                </span>
+                <input type="range" min="0" max="100" oninput="update_volume()" />
+                <span class="volume-max">
+                  <span class="volume-icon"></span>
+                </span>
+              </span>
+              <script>load_volume();</script>
+            </div>
           </div>
         </li>
 
