@@ -327,6 +327,12 @@ nav .pure-menu-heading {
     margin-left: -5px;
 }
 
+.tweet .time {
+    float: right;
+    color: #505050;
+    font-size: 9pt;
+}
+
 .tweet .message {
     margin-top: 25px;
     margin-bottom: 0px;
