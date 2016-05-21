@@ -79,17 +79,42 @@ func hydrateTweet(api *anaconda.TwitterApi, sseEventStream chan<- interface{}, t
 	sseEventStream <- tweet
 }
 
-func twitterListen(conf *Config, sseEventStream chan<- interface{}) {
+func twitterListen(conf *Config, sseEventStream chan<- interface{}) *anaconda.TwitterApi {
 	api := newTwitterApi(conf)
 	if conf.IsDebugging() {
 		api.SetLogger(anaconda.BasicLogger)
 	}
 
-	for {
-		stream := newTwitterStream(conf, api)
-		processStream(api, stream, sseEventStream)
+	go func(api *anaconda.TwitterApi, conf *Config, sseEventStream chan<- interface{}) {
+		for {
+			stream := newTwitterStream(conf, api)
+			processStream(api, stream, sseEventStream)
 
-		//stream closed, need to wait & restart it
-		<-time.After(60 * time.Second)
+			//stream closed, need to wait & restart it
+			<-time.After(60 * time.Second)
+		}
+	}(api, conf, sseEventStream)
+	return api
+}
+
+func loadRecentTweets(api *anaconda.TwitterApi, conf *Config, ts *TweetStorage) error {
+	val := url.Values{
+		"count":            []string{"100"},
+		"include_entities": []string{"true"},
 	}
+	tweets, err := api.GetSearch(conf.GetConfigString("twitter.track"), val)
+	if err != nil {
+		return err
+	}
+
+	for _, t := range tweets.Statuses {
+		tweet, err := convertTweet(t)
+		if err != nil {
+			// log here
+			continue
+		}
+		ts.Add(&tweet)
+	}
+
+	return nil
 }

@@ -38,8 +38,12 @@ func main() {
 	version := getVersion()
 
 	sse := sse.NewProvider()
-	go twitterListen(config, sse.EventStream)
+	tweetStorage := newTweetStorage()
+	twitterApi := twitterListen(config, sse.EventStream)
 	go processTweetSounds(config, sse)
+	go tweetStorage.storeTweets(config, sse)
+
+	loadRecentTweets(twitterApi, config, tweetStorage)
 
 	if !config.IsDebugging() {
 		gin.SetMode(gin.ReleaseMode)
@@ -50,7 +54,7 @@ func main() {
 	router.StaticFS("/sounds", newSoundFS(config))
 	router.LoadHTMLGlob("templates/*")
 
-	initAPI(sse.NewClients, router)
+	initAPI(sse.NewClients, router, tweetStorage)
 
 	router.GET("/", indexPage(version))
 

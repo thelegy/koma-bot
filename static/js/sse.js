@@ -1,7 +1,7 @@
 var eventSource = new EventSource("/api/v1/stream.json");
 
 function isElementInViewport(el) {
-    rect = el.getBoundingClientRect();
+    var rect = el.getBoundingClientRect();
 
     return (
         rect.top >= 0 &&
@@ -12,18 +12,18 @@ function isElementInViewport(el) {
 }
 
 function updateViewport() {
-    newestTweet = getNewestTweet();
+    var newestTweet = getNewestTweet();
     if(newestTweet) {
         newestTweet.scrollIntoView()
     }
 }
 
 function deleteOldTweets() {
-    tweets = getAllTweets();
-    length = tweets.length;
+    var tweets = getAllTweets();
+    var length = tweets.length;
     if(length > 310) {
-        tweetStorage = document.querySelector(".tweets");
-        deleteCount = length - 300;
+        var tweetStorage = document.querySelector(".tweets");
+        var deleteCount = length - 300;
         for(i=0; i<deleteCount; i++) {
             tweetStorage.removeChild(tweets[i]);
         }
@@ -35,37 +35,67 @@ function getAllTweets() {
 }
 
 function getNewestTweet() {
-    tweets = getAllTweets();
+    var tweets = getAllTweets();
     if(tweets.length == 0) {
         return false;
     }
     return tweets[tweets.length-1];
 }
 
+function insertTweet(tweet, tweetId) {
+    var tweets = getAllTweets();
+    if(tweets.length < 2) {
+        document.querySelector(".tweets").appendChild(tweet);
+        return
+    }
+
+    for(var i=tweets.length-1; i>=tweets.length-10; i--) {
+        if(i < 0) {
+            tweets[0].parentNode.insertBefore(tweet, tweets[0]);
+            return;
+        }
+        if(tweets[i].getAttribute("data-tweetId") == tweetId) {
+            return;
+        }
+        if(tweets[i].getAttribute("data-tweetId") < tweetId) {
+            if(tweets[i].nextSibling) {
+                tweets[i].parentNode.insertBefore(tweet, tweets[i].nextSibling);
+            } else {
+                tweets[i].parentNode.appendChild(tweet)
+            }
+            return;
+        }
+    }
+
+}
+
 function tweetHandler(event) {
-    newestTweet = getNewestTweet();
-    isScrolledDown = false;
+    var newestTweet = getNewestTweet();
+    var isScrolledDown = false;
     if(newestTweet) {
         isScrolledDown = isElementInViewport(newestTweet);
     }
 
-    tweetTemplate = document.querySelector(".tweet-template .tweet");
-    tweet = tweetTemplate.cloneNode(true);
+    var tweetTemplate = document.querySelector(".tweet-template .tweet");
+    var tweet = tweetTemplate.cloneNode(true);
 
     var data = JSON.parse(event.data);
     var photo = null;
 
-    for(i in data.entities.Media) {
-        media = data.entities.Media[i];
+    for(var i in data.entities.Media) {
+        var media = data.entities.Media[i];
         if(media.Type == "photo") {
             photo = media;
             break;
         }
     }
 
+    tweet.setAttribute("data-tweetId", data.id);
+    tweet.setAttribute("data-tweetDate", data.created_at);
+
     tweet.querySelector(".message").textContent = data.text;
 
-    user = tweet.querySelector(".user")
+    var user = tweet.querySelector(".user")
     user.querySelector("a").href = "https://twitter.com/" + data.user.screen_name;
     user.querySelector(".name").textContent = data.user.name;
     user.querySelector(".screenname").textContent = data.user.screen_name;
@@ -76,9 +106,7 @@ function tweetHandler(event) {
         tweet.querySelector(".photo").src = photo.Media_url_https;
     }
 
-    tweets = document.querySelector(".tweets");
-
-    tweets.appendChild(tweet);
+    insertTweet(tweet, data.id);
 
     if(isScrolledDown) {
         updateViewport();
@@ -91,7 +119,7 @@ function photo_onload(e) {
 }
 
 function create_audio_element() {
-    o = document.createElement('audio');
+    var o = document.createElement('audio');
     o.addEventListener('ended', function(){
         play_next();
     });
