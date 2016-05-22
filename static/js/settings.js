@@ -7,11 +7,16 @@ function toggle_settings() {
 
 function update_volume() {
     volume = document.querySelector(".volume-control input").value;
+    document.cookie = "volume=" + volume;
     audioElement.volume = volume / 100.0;
 }
 
 function load_volume() {
-    volume = 100;
+    volume = document.cookie.replace(/(?:(?:^|.*;\s*)volume\s*\=\s*([^;]*).*$)|^.*$/, "$1")
+    if(volume === "") {
+        volume = 100;
+    }
+    volume = volume * 1
     document.querySelector(".volume-control input").value = volume;
 }
 
