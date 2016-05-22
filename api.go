@@ -21,7 +21,7 @@ func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Cont
 
 		for _, t := range ts.getTweets() {
 			if t != nil {
-				c.SSEvent(MessageTweet, t)
+				c.SSEvent(MessageTweet1, t)
 				flusher.Flush()
 			}
 		}
@@ -35,7 +35,7 @@ func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Cont
 			case event := <-ch:
 				switch msg := event.(type) {
 				case Tweet:
-					c.SSEvent(MessageTweet, msg)
+					c.SSEvent(MessageTweet1, msg)
 					flusher.Flush()
 				case *Sound:
 					c.SSEvent(MessageSound, msg.Name)
