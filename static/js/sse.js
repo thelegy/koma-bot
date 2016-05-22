@@ -1,5 +1,14 @@
 var eventSource = new EventSource("/api/v1/stream.json");
 
+function escapeHtml(str) {
+    return String(str)
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\//g, "&#x2F;")
+}
+
 function isElementInViewport(el) {
     var rect = el.getBoundingClientRect();
 
@@ -12,11 +21,7 @@ function isElementInViewport(el) {
 }
 
 function updateViewport() {
-    var container = document.querySelector(".tweetContainer1");
-    var newestTweet = getNewestTweet(container);
-    if(newestTweet) {
-        newestTweet.scrollIntoView()
-    }
+    document.querySelector(".foot-anchor").scrollIntoView()
 }
 
 function deleteOldTweets(container) {
@@ -85,7 +90,7 @@ function createTweet(data) {
     tweet.setAttribute("data-tweetId", data.id);
     tweet.setAttribute("data-tweetDate", data.created_at);
 
-    tweet.querySelector(".message").textContent = data.text;
+    tweet.querySelector(".message").innerHTML = escapeHtml(data.text);
 
     var user = tweet.querySelector(".user")
     user.querySelector("a").href = "https://twitter.com/" + data.user.screen_name;
@@ -94,7 +99,7 @@ function createTweet(data) {
     user.querySelector("img").src = data.user.profile_image_url_https;
 
     if(photo != null) {
-        tweet.querySelector(".photo").style = "height: " + (tweet.querySelector(".photo").ownerDocument || document).defaultView.getComputedStyle(tweet.querySelector(".photo"), null).getPropertyValue("max-height");
+        tweet.querySelector(".photo").style = "display: none;";
         tweet.querySelector(".photo").src = photo.Media_url_https;
     }
 
@@ -103,11 +108,7 @@ function createTweet(data) {
 
 function tweetContainer1Handler(event) {
     var container = document.querySelector(".tweetContainer1");
-    var newestTweet = getNewestTweet(container);
-    var isScrolledDown = false;
-    if(newestTweet) {
-        isScrolledDown = isElementInViewport(newestTweet);
-    }
+    var isScrolledDown = isElementInViewport(document.querySelector(".foot-anchor"));
 
     var data = JSON.parse(event.data);
     var tweet = createTweet(data);
@@ -130,7 +131,11 @@ function tweetContainer2Handler(event) {
 }
 
 function photo_onload(e) {
+    var isScrolledDown = isElementInViewport(document.querySelector(".foot-anchor"));
     e.removeAttribute("style")
+    if(isScrolledDown) {
+        updateViewport();
+    }
 }
 
 function create_audio_element() {

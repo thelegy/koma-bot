@@ -8,6 +8,14 @@ nav {
     height: 35px;
 }
 
+nav::after {
+    content: " ";
+    display: block;
+    width: 100%;
+    height: 5px;
+    background: linear-gradient(#202020, transparent);
+}
+
 nav .pure-menu-heading {
     color: #A0A0B0;
     font-weight: bold;
@@ -255,9 +263,8 @@ nav .pure-menu-heading {
 }
 
 .content {
-    position: absolute;
-    top: 40px;
-    bottom: 0px;
+    position: relative;
+    top: 35px;
     width: 100%;
 }
 
@@ -352,6 +359,7 @@ nav .pure-menu-heading {
     margin-top: 25px;
     margin-bottom: 0px;
     margin-left: 60px;
+    white-space: pre-wrap;
 }
 
 .tweet .photo {
