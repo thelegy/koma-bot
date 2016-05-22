@@ -90,7 +90,7 @@ function createTweet(data) {
     user.querySelector("img").src = data.user.profile_image_url_https;
 
     if(photo != null) {
-        tweet.querySelector(".photo").style = "height: " + (tweet.querySelector(".photo").ownerDocument || document).defaultView.getComputedStyle(tweet.querySelector(".photo"), null).getPropertyValue("max-height");
+        tweet.querySelector(".photo").style = "display: none;";
         tweet.querySelector(".photo").src = photo.Media_url_https;
     }
 
@@ -122,7 +122,11 @@ function tweetContainer2Handler(event) {
 }
 
 function photo_onload(e) {
+    var isScrolledDown = isElementInViewport(document.querySelector(".foot-anchor"));
     e.removeAttribute("style")
+    if(isScrolledDown) {
+        updateViewport();
+    }
 }
 
 function create_audio_element() {
