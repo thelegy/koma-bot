@@ -12,11 +12,7 @@ function isElementInViewport(el) {
 }
 
 function updateViewport() {
-    var container = document.querySelector(".tweetContainer1");
-    var newestTweet = getNewestTweet(container);
-    if(newestTweet) {
-        newestTweet.scrollIntoView()
-    }
+    document.querySelector(".foot-anchor").scrollIntoView()
 }
 
 function deleteOldTweets(container) {
@@ -103,11 +99,7 @@ function createTweet(data) {
 
 function tweetContainer1Handler(event) {
     var container = document.querySelector(".tweetContainer1");
-    var newestTweet = getNewestTweet(container);
-    var isScrolledDown = false;
-    if(newestTweet) {
-        isScrolledDown = isElementInViewport(newestTweet);
-    }
+    var isScrolledDown = isElementInViewport(document.querySelector(".foot-anchor"));
 
     var data = JSON.parse(event.data);
     var tweet = createTweet(data);
