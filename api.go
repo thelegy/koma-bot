@@ -2,13 +2,14 @@ package main
 
 import (
 	"net/http"
+	"strconv"
 	"time"
 
 	"github.com/gin-gonic/gin"
 	"github.com/kerwindena/koma-bot/sse"
 )
 
-func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Context) {
+func apiStreamJson(conf *Config, clients <-chan sse.Client) func(c *gin.Context) {
 	return func(c *gin.Context) {
 		client := <-clients
 		ch := client.Channel
@@ -19,12 +20,15 @@ func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Cont
 
 		timeout := time.After(30 * time.Minute)
 
-		for _, t := range ts.getTweets() {
-			if t != nil {
-				c.SSEvent(MessageTweet, t)
-				flusher.Flush()
+		for i, streamInfo := range conf.StreamInfo {
+			for _, t := range streamInfo.getTweets() {
+				if t != nil {
+					c.SSEvent(MessageTweet+strconv.Itoa(i+1), t)
+				}
 			}
 		}
+
+		flusher.Flush()
 
 		for {
 			select {
@@ -35,7 +39,11 @@ func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Cont
 			case event := <-ch:
 				switch msg := event.(type) {
 				case Tweet:
-					c.SSEvent(MessageTweet, msg)
+					for i, streamInfo := range conf.StreamInfo {
+						if streamInfo.ContainsTweet(msg) {
+							c.SSEvent(MessageTweet+strconv.Itoa(i+1), msg)
+						}
+					}
 					flusher.Flush()
 				case *Sound:
 					c.SSEvent(MessageSound, msg.Name)
@@ -48,9 +56,9 @@ func apiStreamJson(clients <-chan sse.Client, ts *TweetStorage) func(c *gin.Cont
 	}
 }
 
-func initAPI(clients <-chan sse.Client, engine *gin.Engine, tweetStorage *TweetStorage) {
+func initAPI(conf *Config, clients <-chan sse.Client, engine *gin.Engine) {
 
-	engine.GET("/api/v1/stream.json", apiStreamJson(clients, tweetStorage))
+	engine.GET("/api/v1/stream.json", apiStreamJson(conf, clients))
 
 	engine.GET("/ping", func(c *gin.Context) {
 		c.JSON(http.StatusOK, gin.H{

@@ -9,3 +9,13 @@ twitter:
     access_token_key:
     access_token_secret:
   track: "#hashtag"
+  stream1:
+    Hashtags:
+      - "hashtag"
+    Users:
+      - "user"
+  stream2:
+    Hashtags:
+      - "hashtag"
+    Users:
+      - "user"

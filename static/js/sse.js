@@ -12,40 +12,40 @@ function isElementInViewport(el) {
 }
 
 function updateViewport() {
-    var newestTweet = getNewestTweet();
+    var container = document.querySelector(".tweetContainer1");
+    var newestTweet = getNewestTweet(container);
     if(newestTweet) {
         newestTweet.scrollIntoView()
     }
 }
 
-function deleteOldTweets() {
-    var tweets = getAllTweets();
+function deleteOldTweets(container) {
+    var tweets = getAllTweets(container);
     var length = tweets.length;
     if(length > 310) {
-        var tweetStorage = document.querySelector(".tweets");
         var deleteCount = length - 300;
         for(i=0; i<deleteCount; i++) {
-            tweetStorage.removeChild(tweets[i]);
+            container.removeChild(tweets[i]);
         }
     }
 }
 
-function getAllTweets() {
-    return document.querySelectorAll(".tweets .tweet");
+function getAllTweets(container) {
+    return container.querySelectorAll(".tweet");
 }
 
-function getNewestTweet() {
-    var tweets = getAllTweets();
+function getNewestTweet(container) {
+    var tweets = getAllTweets(container);
     if(tweets.length == 0) {
         return false;
     }
     return tweets[tweets.length-1];
 }
 
-function insertTweet(tweet, tweetId) {
-    var tweets = getAllTweets();
+function insertTweet(tweet, tweetId, container) {
+    var tweets = getAllTweets(container);
     if(tweets.length < 2) {
-        document.querySelector(".tweets").appendChild(tweet);
+        container.appendChild(tweet);
         return
     }
 
@@ -69,17 +69,9 @@ function insertTweet(tweet, tweetId) {
 
 }
 
-function tweetHandler(event) {
-    var newestTweet = getNewestTweet();
-    var isScrolledDown = false;
-    if(newestTweet) {
-        isScrolledDown = isElementInViewport(newestTweet);
-    }
-
+function createTweet(data) {
     var tweetTemplate = document.querySelector(".tweet-template .tweet");
     var tweet = tweetTemplate.cloneNode(true);
-
-    var data = JSON.parse(event.data);
     var photo = null;
 
     for(var i in data.entities.Media) {
@@ -106,12 +98,35 @@ function tweetHandler(event) {
         tweet.querySelector(".photo").src = photo.Media_url_https;
     }
 
-    insertTweet(tweet, data.id);
+    return tweet
+}
+
+function tweetContainer1Handler(event) {
+    var container = document.querySelector(".tweetContainer1");
+    var newestTweet = getNewestTweet(container);
+    var isScrolledDown = false;
+    if(newestTweet) {
+        isScrolledDown = isElementInViewport(newestTweet);
+    }
+
+    var data = JSON.parse(event.data);
+    var tweet = createTweet(data);
+
+    insertTweet(tweet, data.id, container);
 
     if(isScrolledDown) {
         updateViewport();
-        deleteOldTweets();
+        deleteOldTweets(container);
     }
+}
+
+function tweetContainer2Handler(event) {
+    var container = document.querySelector(".tweetContainer2");
+
+    var data = JSON.parse(event.data);
+    var tweet = createTweet(data);
+
+    insertTweet(tweet, data.id, container);
 }
 
 function photo_onload(e) {
@@ -153,4 +168,5 @@ var audioElement = create_audio_element();
 var to_play = [];
 
 eventSource.addEventListener("sound", soundHandler, false);
-eventSource.addEventListener("tweet", tweetHandler, false);
+eventSource.addEventListener("tweet1", tweetContainer1Handler, false);
+eventSource.addEventListener("tweet2", tweetContainer2Handler, false);

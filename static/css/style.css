@@ -263,21 +263,28 @@ nav .pure-menu-heading {
 
 .clockcontainer {
     position: fixed;
-    top: 40px;
+    top: 35px;
     bottom: 0px;
     text-align: center;
 }
 
-.clock:before, .clock:after{
-    content: "";
-    display: inline-block;
-    vertical-align: middle;  /* Align inline level elements vertically */
-    height: 100%;
-}
-
 .clock {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    z-index: 2;
+    background-color: #202020;
     font-size: 55pt;
     color: #505055;
+}
+
+.clock::after {
+    content: " ";
+    position: absolute;
+    display: block;
+    background: linear-gradient(#202020, transparent);
+    height: 5px;
+    width: 100%
 }
 
 .clock span {
@@ -287,12 +294,20 @@ nav .pure-menu-heading {
     color: #A0A0B0;
 }
 
+.tweetContainer2 {
+    position: absolute;
+    width: 100%;
+    bottom: 0px;
+    z-index: 0;
+}
+
 .tweet {
     background-color: #A0A0B0;
     min-height: 50px;
     margin: 7px;
     padding: 7px;
     border-radius: 7px;
+    text-align: left;
 }
 
 .tweet .user {

@@ -9,6 +9,11 @@ import (
 	"github.com/chimeracoder/anaconda"
 )
 
+type tweetStream struct {
+	Hashtags []string
+	Users    []string
+}
+
 func newTwitterApi(conf *Config) *anaconda.TwitterApi {
 
 	anaconda.SetConsumerKey(conf.GetConfigString("twitter.login.consumer_key"))
@@ -21,8 +26,11 @@ func newTwitterApi(conf *Config) *anaconda.TwitterApi {
 }
 
 func newTwitterStream(conf *Config, api *anaconda.TwitterApi) *anaconda.Stream {
+	track, follow := conf.GetTweetFilter()
+
 	params := url.Values{}
-	params.Set("track", conf.GetConfigString("twitter.track"))
+	params.Set("track", track)
+	params.Set("follow", follow)
 
 	stream := api.PublicStreamFilter(params)
 
@@ -45,14 +53,14 @@ func convertTweet(t anaconda.Tweet) (Tweet, error) {
 	return tweet, nil
 }
 
-func processStream(api *anaconda.TwitterApi, stream *anaconda.Stream, sseEventStream chan<- interface{}) {
-	regex, err := regexp.Compile("https?://")
+func processStream(conf *Config, api *anaconda.TwitterApi, stream *anaconda.Stream, sseEventStream chan<- interface{}) {
+	regex, rerr := regexp.Compile("https?://")
 	for message := range stream.C {
 		if t, ok := message.(anaconda.Tweet); ok {
-			if err == nil && regex.MatchString(t.Text) {
+			if rerr == nil && regex.MatchString(t.Text) {
 				// Tweet might contain an image
 				// we need to hydrate the tweet first
-				go hydrateTweet(api, sseEventStream, t.Id)
+				go hydrateTweet(conf, api, sseEventStream, t.Id)
 				continue
 			}
 			tweet, err := convertTweet(t)
@@ -60,12 +68,13 @@ func processStream(api *anaconda.TwitterApi, stream *anaconda.Stream, sseEventSt
 				// log here
 				continue
 			}
+			conf.StoreTweet(tweet)
 			sseEventStream <- tweet
 		}
 	}
 }
 
-func hydrateTweet(api *anaconda.TwitterApi, sseEventStream chan<- interface{}, tweetId int64) {
+func hydrateTweet(conf *Config, api *anaconda.TwitterApi, sseEventStream chan<- interface{}, tweetId int64) {
 	t, err := api.GetTweet(tweetId, nil)
 	if err != nil {
 		// log here
@@ -76,44 +85,47 @@ func hydrateTweet(api *anaconda.TwitterApi, sseEventStream chan<- interface{}, t
 		// log here
 		return
 	}
+	conf.StoreTweet(tweet)
 	sseEventStream <- tweet
 }
 
-func twitterListen(conf *Config, sseEventStream chan<- interface{}) *anaconda.TwitterApi {
+func twitterConnect(conf *Config) *anaconda.TwitterApi {
 	api := newTwitterApi(conf)
 	if conf.IsDebugging() {
 		api.SetLogger(anaconda.BasicLogger)
 	}
-
-	go func(api *anaconda.TwitterApi, conf *Config, sseEventStream chan<- interface{}) {
-		for {
-			stream := newTwitterStream(conf, api)
-			processStream(api, stream, sseEventStream)
-
-			//stream closed, need to wait & restart it
-			<-time.After(60 * time.Second)
-		}
-	}(api, conf, sseEventStream)
 	return api
 }
 
-func loadRecentTweets(api *anaconda.TwitterApi, conf *Config, ts *TweetStorage) error {
+func twitterListen(api *anaconda.TwitterApi, conf *Config, sseEventStream chan<- interface{}) {
+	for {
+		stream := newTwitterStream(conf, api)
+		processStream(conf, api, stream, sseEventStream)
+
+		//stream closed, need to wait & restart it
+		<-time.After(60 * time.Second)
+	}
+}
+
+func loadRecentTweets(api *anaconda.TwitterApi, conf *Config) error {
 	val := url.Values{
 		"count":            []string{"100"},
 		"include_entities": []string{"true"},
 	}
-	tweets, err := api.GetSearch(conf.GetConfigString("twitter.track"), val)
-	if err != nil {
-		return err
-	}
-
-	for _, t := range tweets.Statuses {
-		tweet, err := convertTweet(t)
+	for _, tsi := range conf.StreamInfo {
+		tweets, err := api.GetSearch(tsi.GetTweetFilter(), val)
 		if err != nil {
-			// log here
-			continue
+			return err
 		}
-		ts.Add(&tweet)
+
+		for _, t := range tweets.Statuses {
+			tweet, err := convertTweet(t)
+			if err != nil {
+				// log here
+				continue
+			}
+			tsi.Add(&tweet)
+		}
 	}
 
 	return nil
