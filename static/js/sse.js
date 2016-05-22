@@ -1,5 +1,14 @@
 var eventSource = new EventSource("/api/v1/stream.json");
 
+function escapeHtml(str) {
+    return String(str)
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;")
+        .replace(/\//g, "&#x2F;")
+}
+
 function isElementInViewport(el) {
     var rect = el.getBoundingClientRect();
 
@@ -81,7 +90,7 @@ function createTweet(data) {
     tweet.setAttribute("data-tweetId", data.id);
     tweet.setAttribute("data-tweetDate", data.created_at);
 
-    tweet.querySelector(".message").textContent = data.text;
+    tweet.querySelector(".message").innerHTML = escapeHtml(data.text);
 
     var user = tweet.querySelector(".user")
     user.querySelector("a").href = "https://twitter.com/" + data.user.screen_name;

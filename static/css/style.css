@@ -359,6 +359,7 @@ nav .pure-menu-heading {
     margin-top: 25px;
     margin-bottom: 0px;
     margin-left: 60px;
+    white-space: pre-wrap;
 }
 
 .tweet .photo {
