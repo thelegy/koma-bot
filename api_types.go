@@ -5,10 +5,9 @@ import (
 )
 
 const (
-	MessageNone   = "none"
-	MessageTweet1 = "tweet1"
-	MessageTweet2 = "tweet2"
-	MessageSound  = "sound"
+	MessageNone  = "none"
+	MessageTweet = "tweet"
+	MessageSound = "sound"
 )
 
 type TUser struct {

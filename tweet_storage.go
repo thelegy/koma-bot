@@ -1,7 +1,9 @@
 package main
 
 import (
+	"bytes"
 	"errors"
+	"strings"
 	"sync"
 
 	"github.com/kerwindena/koma-bot/sse"
@@ -9,35 +11,51 @@ import (
 
 const TweetStorageMaxCapacity = 100
 
-type TweetStorage struct {
-	tweets [TweetStorageMaxCapacity]*Tweet
-	mutex  *sync.RWMutex
+type tweetStreamInfo struct {
+	Hashtags []string
+	Users    []string
+	tweets   [TweetStorageMaxCapacity]*Tweet
+	mutex    *sync.RWMutex
 }
 
-func newTweetStorage() *TweetStorage {
-	ts := &TweetStorage{
+func newTweetStreamInfo() *tweetStreamInfo {
+	tsi := &tweetStreamInfo{
 		mutex: &sync.RWMutex{},
 	}
-	return ts
+	return tsi
 }
 
-func (ts *TweetStorage) Add(t *Tweet) error {
+func (tsi *tweetStreamInfo) GetTweetFilter() string {
+	var filter bytes.Buffer
+	for _, hashtag := range tsi.Hashtags {
+		filter.WriteString(" OR #")
+		filter.WriteString(hashtag)
+	}
+	for _, user := range tsi.Users {
+		filter.WriteString(" OR from:")
+		filter.WriteString(user)
+	}
+	filter.Next(4)
+	return filter.String()
+}
+
+func (tsi *tweetStreamInfo) Add(t *Tweet) error {
 	j := -1
 
-	ts.mutex.Lock()
-	defer ts.mutex.Unlock()
+	tsi.mutex.Lock()
+	defer tsi.mutex.Unlock()
 
 	for j < TweetStorageMaxCapacity-1 {
-		if ts.tweets[j+1] == nil {
+		if tsi.tweets[j+1] == nil {
 			j++
 			continue
 		}
 
-		if t.Id == ts.tweets[j+1].Id {
+		if t.Id == tsi.tweets[j+1].Id {
 			return errors.New("Tweet already exists")
 		}
 
-		if t.Id < ts.tweets[j+1].Id {
+		if t.Id < tsi.tweets[j+1].Id {
 			break
 		}
 		j++
@@ -52,33 +70,49 @@ func (ts *TweetStorage) Add(t *Tweet) error {
 	}
 
 	for i := 0; i < j; i++ {
-		ts.tweets[i] = ts.tweets[i+1]
+		tsi.tweets[i] = tsi.tweets[i+1]
 	}
-	ts.tweets[j] = t
+	tsi.tweets[j] = t
 
 	return nil
 }
 
-func (ts *TweetStorage) getTweets() []*Tweet {
+func (tsi *tweetStreamInfo) getTweets() []*Tweet {
 	tweets := make([]*Tweet, TweetStorageMaxCapacity)
 
-	ts.mutex.RLock()
-	defer ts.mutex.RUnlock()
+	tsi.mutex.RLock()
+	defer tsi.mutex.RUnlock()
 
-	copy(tweets, ts.tweets[:])
+	copy(tweets, tsi.tweets[:])
 
 	return tweets
 }
 
-func (ts *TweetStorage) storeTweets(conf *Config, sse sse.Provider) {
+func (tsi *tweetStreamInfo) storeTweets(conf *Config, sse sse.Provider) {
 	for {
 		c := <-sse.NewClients
 		for m := range c.Channel {
 			switch msg := m.(type) {
 			default:
 			case Tweet:
-				ts.Add(&msg)
+				tsi.Add(&msg)
 			}
 		}
 	}
+}
+
+func (tsi tweetStreamInfo) ContainsTweet(t Tweet) bool {
+	for _, hashtag := range tsi.Hashtags {
+		for _, tweetHashtag := range t.Entities.Hashtags {
+			if strings.EqualFold(hashtag, tweetHashtag.Text) {
+				return true
+			}
+		}
+	}
+	for _, user := range tsi.Users {
+		if strings.EqualFold(user, t.User.ScreenName) {
+			return true
+		}
+	}
+	return false
 }
