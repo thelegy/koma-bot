@@ -14,3 +14,10 @@ function load_volume() {
     volume = 100;
     document.querySelector(".volume-control input").value = volume;
 }
+
+document.addEventListener("click", function(event) {
+    if(!event.target.closest(".settings-button") && !event.target.closest(".settings-box")) {
+        document.querySelector(".settings-button").classList.remove("active");
+        document.querySelector(".settings-box").classList.remove("active");
+    }
+});
