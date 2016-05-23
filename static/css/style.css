@@ -301,6 +301,13 @@ nav .pure-menu-heading {
     color: #A0A0B0;
 }
 
+.clock .date {
+    display: block;
+    font-size: 12pt;
+    margin-top: -14px;
+    margin-bottom: 5px;
+}
+
 .tweetContainer2 {
     position: absolute;
     width: 100%;
