@@ -90,7 +90,7 @@ func (conf *Config) GetTimetableInfo() TimetableInfo {
 	for _, key := range v.AllKeys() {
 		tir := &TimetableInfoRow{}
 		v.UnmarshalKey(key, tir)
-		ti = append(ti, *tir)
+		ti[tir.Start] = *tir
 	}
 	return ti
 }
