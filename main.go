@@ -6,7 +6,9 @@ import (
 
 	"net/http"
 	"os"
+	"os/signal"
 	"strings"
+	"syscall"
 )
 
 type SoundFS struct {
@@ -33,11 +35,24 @@ func indexPage(v Version) func(*gin.Context) {
 	}
 }
 
+func processSignal(out chan<- interface{}) chan<- os.Signal {
+	in := make(chan os.Signal)
+	go func(out chan<- interface{}, in <-chan os.Signal) {
+		for {
+			sig := <-in
+			out <- sig
+		}
+	}(out, in)
+	return in
+}
+
 func main() {
 	config := loadConfig()
 	version := getVersion()
 
 	sse := sse.NewProvider()
+	sigStream := processSignal(sse.EventStream)
+	signal.Notify(sigStream, syscall.SIGUSR1)
 	twitterApi := twitterConnect(config)
 
 	config.ResolveUserIds(twitterApi)
