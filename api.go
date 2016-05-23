@@ -29,28 +29,40 @@ func apiStreamJson(conf *Config, clients <-chan sse.Client) func(c *gin.Context)
 			}
 		}
 
+		c.SSEvent("", "")
 		flusher.Flush()
 
 		for {
+			keepAliveTimer := time.After(55 * time.Second)
 			select {
 			case <-timeout:
 				return
 			case <-c.Done():
 				return
+			case <-keepAliveTimer:
+				c.Writer.WriteString(":\n\n")
+				flusher.Flush()
 			case event := <-ch:
 				switch msg := event.(type) {
 				case Tweet:
+					messageSent := false
 					for i, streamInfo := range conf.StreamInfo {
 						if streamInfo.ContainsTweet(msg) {
 							c.SSEvent(MessageTweet+strconv.Itoa(i+1), msg)
+							messageSent = true
 						}
+					}
+					if !messageSent {
+						c.Writer.WriteString(":\n\n")
 					}
 					flusher.Flush()
 				case syscall.Signal:
 					if msg == syscall.SIGUSR1 {
 						c.SSEvent(MessageReload, "")
-						flusher.Flush()
+					} else {
+						c.Writer.WriteString(":\n\n")
 					}
+					flusher.Flush()
 				case *Sound:
 					c.SSEvent(MessageSound, msg.Name)
 					flusher.Flush()
