@@ -3,6 +3,7 @@ package main
 import (
 	"net/http"
 	"strconv"
+	"syscall"
 	"time"
 
 	"github.com/gin-gonic/gin"
@@ -45,6 +46,11 @@ func apiStreamJson(conf *Config, clients <-chan sse.Client) func(c *gin.Context)
 						}
 					}
 					flusher.Flush()
+				case syscall.Signal:
+					if msg == syscall.SIGUSR1 {
+						c.SSEvent(MessageReload, "")
+						flusher.Flush()
+					}
 				case *Sound:
 					c.SSEvent(MessageSound, msg.Name)
 					flusher.Flush()

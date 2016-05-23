@@ -84,6 +84,17 @@ func (conf *Config) StoreTweet(t Tweet) {
 	}
 }
 
+func (conf *Config) GetTimetableInfo() TimetableInfo {
+	ti := TimetableInfo{}
+	v := conf.configViper.Sub("timetable")
+	for _, key := range v.AllKeys() {
+		tir := &TimetableInfoRow{}
+		v.UnmarshalKey(key, tir)
+		ti = append(ti, *tir)
+	}
+	return ti
+}
+
 func (conf *Config) iterateSounds() <-chan *Sound {
 	sounds := make(chan *Sound)
 	go func(c chan<- *Sound) {

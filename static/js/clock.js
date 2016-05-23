@@ -4,6 +4,7 @@ function updateClock() {
     var hour = ('0' + time.getHours()).slice(-2);
     var minute = ('0' + time.getMinutes()).slice(-2);
     var second = ('0' + time.getSeconds()).slice(-2);
+    var date = formatDate(time)
 
     if(document.querySelector('.clock .hour').textContent != hour)
         document.querySelector('.clock .hour').textContent = hour;
@@ -11,10 +12,44 @@ function updateClock() {
         document.querySelector('.clock .minute').textContent = minute;
     if(document.querySelector('.clock .second').textContent != second)
         document.querySelector('.clock .second').textContent = second;
+    if(document.querySelector('.clock .date').textContent != date)
+        document.querySelector('.clock .date').textContent = date;
 
     setTimeout(updateClock, 1001 - time.getMilliseconds());
 
     updateTime();
+    updateTimetable(time);
+}
+
+function formatDate(time) {
+    var date = "";
+    var dateFormat = document.querySelector(".clock-format");
+    switch(time.getDay()) {
+    case 0:
+        date = dateFormat.querySelector(".weekday .sunday").textContent;
+        break;
+    case 1:
+        date = dateFormat.querySelector(".weekday .monday").textContent;
+        break;
+    case 2:
+        date = dateFormat.querySelector(".weekday .tuesday").textContent;
+        break;
+    case 3:
+        date = dateFormat.querySelector(".weekday .wednesday").textContent;
+        break;
+    case 4:
+        date = dateFormat.querySelector(".weekday .thursday").textContent;
+        break;
+    case 5:
+        date = dateFormat.querySelector(".weekday .friday").textContent;
+        break;
+    case 6:
+        date = dateFormat.querySelector(".weekday .saturday").textContent;
+        break;
+    }
+    date += ", " + dateFormat.querySelector(".the").textContent + " "
+    date +=(time.getYear() - 100) + '/' + time.getMonth() + '/' + time.getDate();
+    return date;
 }
 
 function formatTimeDiff(time, format, date) {
@@ -59,6 +94,30 @@ function formatTimeDiff(time, format, date) {
 
     return (date.getYear() - 100) + '/' + date.getMonth() + '/' + date.getDate();
 
+}
+
+function updateTimetable(time) {
+    var rows = document.querySelectorAll(".timetable tr")
+
+    for(var i=0; i<rows.length; i++) {
+        var start_time = new Date(rows[i].getAttribute("data-start"));
+        if(start_time == "Invalid Date") {
+            continue;
+        }
+        if(start_time-time > 3600000) {
+            rows[i].classList.remove("active");
+            continue;
+        }
+        var end_time = new Date(rows[i].getAttribute("data-end"));
+        if(end_time == "Invalid Date") {
+            continue;
+        }
+        if(end_time-time <= 0) {
+            rows[i].classList.remove("active");
+            continue;
+        }
+        rows[i].classList.add("active");
+    }
 }
 
 function updateTime() {
