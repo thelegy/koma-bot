@@ -1,6 +1,6 @@
 package main
 
-type TimetableInfo []TimetableInfoRow
+type TimetableInfo map[string]TimetableInfoRow
 
 type TimetableInfoRow struct {
 	Start   string
