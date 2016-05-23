@@ -1,4 +1,4 @@
-var eventSource = new EventSource("/api/v1/stream.json");
+var eventSource;
 
 function escapeHtml(str) {
     return String(str)
@@ -168,10 +168,19 @@ function soundHandler(event) {
     play_next();
 }
 
+function startEvent() {
+    if(eventSource) {
+        eventSource.close();
+    }
+    eventSource = new EventSource("/api/v1/stream.json");
+    eventSource.addEventListener("error", startEvent);
+    eventSource.addEventListener("sound", soundHandler, false);
+    eventSource.addEventListener("tweet1", tweetContainer1Handler, false);
+    eventSource.addEventListener("tweet2", tweetContainer2Handler, false);
+}
+
 var audioElement = create_audio_element();
 
 var to_play = [];
 
-eventSource.addEventListener("sound", soundHandler, false);
-eventSource.addEventListener("tweet1", tweetContainer1Handler, false);
-eventSource.addEventListener("tweet2", tweetContainer2Handler, false);
+startEvent()
