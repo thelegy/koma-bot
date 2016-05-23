@@ -18,6 +18,7 @@ function updateClock() {
     setTimeout(updateClock, 1001 - time.getMilliseconds());
 
     updateTime();
+    updateTimetable(time);
 }
 
 function formatDate(time) {
@@ -93,6 +94,30 @@ function formatTimeDiff(time, format, date) {
 
     return (date.getYear() - 100) + '/' + date.getMonth() + '/' + date.getDate();
 
+}
+
+function updateTimetable(time) {
+    var rows = document.querySelectorAll(".timetable tr")
+
+    for(var i=0; i<rows.length; i++) {
+        var start_time = new Date(rows[i].getAttribute("data-start"));
+        if(start_time == "Invalid Date") {
+            continue;
+        }
+        if(start_time-time > 3600000) {
+            rows[i].classList.remove("active");
+            continue;
+        }
+        var end_time = new Date(rows[i].getAttribute("data-end"));
+        if(end_time == "Invalid Date") {
+            continue;
+        }
+        if(end_time-time <= 0) {
+            rows[i].classList.remove("active");
+            continue;
+        }
+        rows[i].classList.add("active");
+    }
 }
 
 function updateTime() {

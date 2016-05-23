@@ -11,6 +11,19 @@
 </div>
 
 <div class="pure-u-1 pure-u-md-1-2 clockcontainer">
+  <div class="timetable">
+    <table class="pure-table">
+      {{ $rows := . }}
+      {{ range $row := $rows }}
+      <tr data-start="{{$row.Start|html}}" data-end="{{$row.End|html}}">
+        <td class="name">{{$row.Name}}</td>
+        {{ range $entry := $row.Entries }}
+        <td>{{$entry}}</td>
+        {{ end }}
+      </tr>
+      {{ end }}
+    </table>
+  </div>
   <span class="clock">
     <span class="hour">00</span>
     :

@@ -6,6 +6,7 @@
     <link rel="stylesheet" href="/static/css/pure/grids-min.css">
     <link rel="stylesheet" href="/static/css/pure/grids-responsive-min.css">
     <link rel="stylesheet" href="/static/css/pure/menus-min.css">
+    <link rel="stylesheet" href="/static/css/pure/tables-min.css">
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="/static/js/settings.js"></script>
     {{template "additionalHeaders"}}
@@ -71,7 +72,7 @@
 
     </nav>
     <div class="content pure-g">
-      {{template "content"}}
+      {{template "content" .TimetableInfo}}
     </div>
     <div class="foot-anchor"></div>
   </body>

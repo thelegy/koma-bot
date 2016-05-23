@@ -19,3 +19,20 @@ twitter:
       - "hashtag"
     Users:
       - "user"
+timetable:
+  row1:
+    Start: "2006/01/02 15:00:00 +0700"
+    End: "2006/01/02 16:00:00 +0700"
+    Name: "Mon 15-16"
+    Entries:
+      - "Speech 1"
+      - "Speech 2"
+      - "so on"
+  row2:
+    Start: "2006/01/02 16:00:00 +0700"
+    End: "2006/01/02 17:00:00 +0700"
+    Name: "Mon 16-17"
+    Entries:
+      - "Speech 3"
+      - "Speech 4"
+      - "so on"

@@ -275,6 +275,49 @@ nav .pure-menu-heading {
     text-align: center;
 }
 
+.timetable {
+    position: relative;
+    display: block;
+    z-index: 2;
+    margin: 0 5px;
+    background-color: #A0A0B0;
+}
+
+.timetable table {
+    width: 100%;
+    text-align: left;
+    font-size: 0pt;
+    border: none;
+}
+
+.timetable table tr,
+.timetable table td {
+    -webkit-transition: all 2s;
+    -moz-transition: all 2s;
+    -ms-transition: all 2s;
+    -o-transition: all 2s;
+    transition: all 2s;
+}
+
+.timetable table .name {
+    white-space: nowrap;
+}
+
+.timetable table td {
+    border: none;
+    opacity: 0;
+}
+
+.timetable .active {
+    font-size: 11pt;
+    opacity: 1;
+}
+
+.timetable .active td {
+    font-size: 11pt;
+    opacity: 1;
+}
+
 .clock {
     position: relative;
     display: inline-block;
@@ -285,7 +328,21 @@ nav .pure-menu-heading {
     color: #505055;
 }
 
+
+.clock::before {
+    content: " ";
+    position: absolute;
+    display: block;
+    background: linear-gradient(transparent, #202020);
+    margin-top: -5px;
+    height: 5px;
+    width: 100%;
+    border-bottom: 1px solid #505055;
+
+}
+
 .clock::after {
+    border-top: 1px solid #505055;
     content: " ";
     position: absolute;
     display: block;
@@ -299,6 +356,8 @@ nav .pure-menu-heading {
     margin: 0 -.3em;
     font-weight: bold;
     color: #A0A0B0;
+    position: relative;
+    top: -4px
 }
 
 .clock .date {

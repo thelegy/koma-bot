@@ -27,10 +27,11 @@ func newSoundFS(c *Config) SoundFS {
 	return s
 }
 
-func indexPage(v Version) func(*gin.Context) {
+func indexPage(v Version, timetableInfo TimetableInfo) func(*gin.Context) {
 	return func(c *gin.Context) {
 		c.HTML(http.StatusOK, "home.html", gin.H{
-			"Version": v,
+			"Version":       v,
+			"TimetableInfo": timetableInfo,
 		})
 	}
 }
@@ -49,6 +50,8 @@ func processSignal(out chan<- interface{}) chan<- os.Signal {
 func main() {
 	config := loadConfig()
 	version := getVersion()
+
+	timetableInfo := config.GetTimetableInfo()
 
 	sse := sse.NewProvider()
 	sigStream := processSignal(sse.EventStream)
@@ -74,7 +77,7 @@ func main() {
 
 	initAPI(config, sse.NewClients, router)
 
-	router.GET("/", indexPage(version))
+	router.GET("/", indexPage(version, timetableInfo))
 
 	if len(os.Args) > 1 && os.Args[1] == "--docker" {
 		panic(router.Run("0.0.0.0:8000"))
