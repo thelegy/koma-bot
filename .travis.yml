@@ -19,25 +19,14 @@ before_script:
   - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "nested"; fi)
 
 script:
-  - |
-      sass \
-        --update \
-        --scss \
-        --force \
-        --sourcemap=none \
-        --style "${SASS_STYLE}" \
-        static/css \
-      && \
-      postcss \
-        --use autoprefixer \
-        --replace \
-        static/css/**/*.css
+  - ./processSass.sh
   - go test -v ./...
 
 after_success:
   - test "${TRAVIS_PULL_REQUEST}" = "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
   - export TAG=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "latest"; else echo ${TRAVIS_BRANCH}; fi)
   - export COMMIT=$(git rev-parse --short --verify HEAD)
+  - ./processSass.sh
   - |
       CGO_ENABLED=0 GOOS=linux go build \
         -a -v -o koma-bot -tags netgo \
