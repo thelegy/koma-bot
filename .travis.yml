@@ -16,8 +16,7 @@ env:
       - REPO=kerwindena/koma-bot
 
 before_script:
-  - SASS_STYLE="nested"
-  - test "${TRAVIS_BRANCH}" = "master" && SASS_STYLE="compressed" || true
+  - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "nested"; fi)
 
 script:
   - |
