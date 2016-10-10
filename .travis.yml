@@ -6,10 +6,21 @@ go:
 services:
   - docker
 
+before_install:
+  - gem install sass
+
 env:
   - global:
       - DOCKER_USER=kerwindena
       - REPO=kerwindena/koma-bot
+
+before_script:
+  - SASS_STYLE="nested"
+  - test "${TRAVIS_BRANCH}" == "master" && SASS_STYLE="compressed"
+
+script:
+  - sass --update --scss --force --sourcemap=none --style "${SASS_STYLE}" static/css
+  - go test -v ./...
 
 after_success:
   - test ${TRAVIS_PULL_REQUEST} == "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"

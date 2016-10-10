@@ -1,5 +1,7 @@
 *~
 #*#
 
+/.sass-cache/
+
 /koma_bot*
 !/koma_bot*.example.yaml
