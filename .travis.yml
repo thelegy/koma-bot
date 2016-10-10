@@ -16,14 +16,14 @@ env:
 
 before_script:
   - SASS_STYLE="nested"
-  - test "${TRAVIS_BRANCH}" == "master" && SASS_STYLE="compressed"
+  - test "${TRAVIS_BRANCH}" = "master" && SASS_STYLE="compressed" || true
 
 script:
   - sass --update --scss --force --sourcemap=none --style "${SASS_STYLE}" static/css
   - go test -v ./...
 
 after_success:
-  - test ${TRAVIS_PULL_REQUEST} == "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
+  - test "${TRAVIS_PULL_REQUEST}" = "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
   - export TAG=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "latest"; else echo ${TRAVIS_BRANCH}; fi)
   - export COMMIT=$(git rev-parse --short --verify HEAD)
   - |
@@ -41,4 +41,4 @@ after_success:
   - docker build --file=Dockerfile --tag=${REPO}:${COMMIT} .
   - docker tag ${REPO}:${COMMIT} ${REPO}:${TAG}
   - docker tag ${REPO}:${COMMIT} ${REPO}:travis-${TRAVIS_BUILD_NUMBER}
-  - test ${TRAVIS_PULL_REQUEST} == "false" && docker push ${REPO}
+  - test "${TRAVIS_PULL_REQUEST}" = "false" && docker push ${REPO}
