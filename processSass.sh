@@ -12,4 +12,4 @@ sass \
 postcss \
   --use autoprefixer \
   --replace \
-  static/css/**/*.css
+  static/css/{,**/}*.css
