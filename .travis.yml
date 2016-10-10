@@ -18,10 +18,10 @@ env:
 before_script:
   - SASS_STYLE="nested"
   - test "${TRAVIS_BRANCH}" = "master" && SASS_STYLE="compressed" || true
-  - postcss --use autoprefixer --replace static/css/**/*.css
 
 script:
   - sass --update --scss --force --sourcemap=none --style "${SASS_STYLE}" static/css
+  - postcss --use autoprefixer --replace static/css/**/*.css
   - go test -v ./...
 
 after_success:
