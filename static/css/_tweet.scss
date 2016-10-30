@@ -1,0 +1,64 @@
+.tweet {
+  background-color: #{$tweetBackgroundColor};
+  min-height: 50px;
+  margin: 7px;
+  padding: 7px;
+  border-radius: 7px;
+  text-align: left;
+
+  .user {
+    position: absolute;
+
+    img {
+      float: left;
+      width: 50px;
+      height: 50px;
+      border-radius: 7px;
+    }
+
+    a {
+      color: #{$borderColor};
+      text-decoration: none;
+      font-size: 9pt;
+
+      .name {
+        margin-left: 10px;
+        font-weight: bold;
+        color: black;
+        font-size: 13pt;
+      }
+
+      &:hover .name {
+        text-decoration: underline;
+      }
+    }
+
+    .screenname {
+      margin-left: -5px;
+    }
+  }
+
+  .time {
+    float: right;
+    color: #{$borderColor};
+    font-size: 9pt;
+  }
+
+  .message {
+    margin-top: 25px;
+    margin-bottom: 0px;
+    margin-left: 60px;
+    white-space: pre-wrap;
+  }
+
+  .photo {
+    padding-left: 60px;
+    max-width: calc(100% - 60px);
+    max-height: 550px;
+    object-fit: scale-down;
+    margin-top: 5px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

@@ -1,0 +1,46 @@
+$buttonTransition: all 0.4s;
+
+%buttonHamburger {
+  transition: $buttonTransition;
+  text-align: left;
+  cursor: pointer;
+  display: inline-block;
+
+  span,
+  span::before,
+  span::after {
+    transition: $buttonTransition;
+    background-color: white;
+    width: 20px;
+    height: 3px;
+  }
+
+  span {
+    display: block;
+    position: relative;
+    top: 7px;
+  }
+
+  span::before,
+  span::after {
+    content: " ";
+    position: absolute;
+    top: -8px;
+  }
+
+  span::after {
+    top: 8px;
+  }
+
+  &.active span{
+    background-color: transparent;
+  }
+
+  &.active span::before{
+    transform: rotate(45deg) translate(6px, 5.5px) scale(1.2, 1);
+  }
+
+  &.active span::after{
+    transform: rotate(-45deg) translate(6px, -5.5px) scale(1.2, 1);
+  }
+}

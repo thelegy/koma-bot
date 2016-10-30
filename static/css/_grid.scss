@@ -1,0 +1,70 @@
+$grids: (5, 12) !default;
+$sizes: 'sm' 568px, 'md' 768px, 'lg' 1024px, 'xl' 1280px, 'hd' 1920px  !default;
+
+
+%gridTemplate {
+
+  &::after {
+    content: ' ';
+    display: block;
+    clear: both;
+  }
+
+  > * {
+    display: block;
+    float: left;
+    min-height: 1px;
+    overflow: hidden;
+  }
+
+  > .col-0 {
+    width: 0%;
+    display: none;
+  }
+
+}
+
+%gridFullRowTemplate {
+  width: 100%;
+}
+
+
+@each $grid in $grids {
+  .grid-#{$grid} {
+
+    @extend %gridTemplate;
+
+    > .col-#{$grid} {
+      @extend %gridFullRowTemplate;
+    }
+
+    @if $grid > 1 {
+      @for $col from 1 to $grid {
+
+        >.col-#{$col} {
+          width: #{$col / $grid * 100%};
+        }
+
+      }
+    }
+
+    @each $size in $sizes {
+      @media screen and (min-width: #{nth($size, 2)}) {
+
+        >.col-#{nth($size, 1)}-0 {
+          width: 0%;
+          display: none;
+        }
+
+        @for $col from 1 through $grid {
+          >.col-#{nth($size, 1)}-#{$col} {
+            width: #{$col / $grid * 100%};
+            display: block;
+          }
+        }
+
+      }
+    }
+
+  }
+}

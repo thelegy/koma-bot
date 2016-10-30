@@ -1,0 +1,47 @@
+.clock {
+  position: relative;
+  display: inline-block;
+  width: 100%;
+  z-index: 2;
+  background-color: #{$backgroundColor};
+  font-size: 55pt;
+  color: #{$borderColor};
+
+  &::before {
+    content: " ";
+    position: absolute;
+    display: block;
+    background: linear-gradient(transparent, #{$backgroundColor});
+    margin-top: -5px;
+    height: 5px;
+    width: 100%;
+    border-bottom: 1px solid #{$borderColor};
+  }
+
+  &::after {
+    border-top: 1px solid #{$borderColor};
+    content: " ";
+    position: absolute;
+    display: block;
+    background: linear-gradient(#{$backgroundColor}, transparent);
+    height: 5px;
+    width: 100%
+  }
+
+  span {
+    vertical-align: middle;
+    margin: 0 -.3em;
+    font-weight: bold;
+    color: #{$tweetBackgroundColor};
+    position: relative;
+    top: -4px
+  }
+
+  .date {
+    display: block;
+    font-size: 12pt;
+    margin-top: -14px;
+    margin-bottom: 5px;
+  }
+
+}

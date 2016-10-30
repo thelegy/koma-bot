@@ -7,33 +7,42 @@
   {{template "tweet.html"}}
 </div>
 
-<div class="pure-u-1 pure-u-md-1-2 tweetContainer1 tweets">
-</div>
+<div class="grid-12">
 
-<div class="pure-u-1 pure-u-md-1-2 clockcontainer">
-  <div class="timetable">
-    <table class="pure-table">
-      {{ $rows := . }}
-      {{ range $row := $rows }}
-      <tr data-start="{{$row.Start|html}}" data-end="{{$row.End|html}}">
-        <td class="name">{{$row.Name}}</td>
-        {{ range $entry := $row.Entries }}
-        <td>{{$entry}}</td>
-        {{ end }}
-      </tr>
-      {{ end }}
-    </table>
+  <div class="col-12 col-lg-6 tweetContainer1 tweets">
   </div>
-  <span class="clock">
-    <span class="hour">00</span>
-    :
-    <span class="minute">00</span>
-    :
-    <span class="second">00</span>
-    <span class="date"></span>
-  </span>
-  <script src="/static/js/clock.js"></script>
-  <div class="tweetContainer2 tweets"></div>
+
+</div>
+<div class="grid-12 fixedContainer">
+
+  <div class="col-6">
+  </div>
+
+  <div class="col-0 col-lg-6 clockcontainer">
+    <div class="timetable">
+      <table>
+        {{ $rows := . }}
+        {{ range $row := $rows }}
+        <tr data-start="{{$row.Start|html}}" data-end="{{$row.End|html}}">
+          <td class="name">{{$row.Name}}</td>
+          {{ range $entry := $row.Entries }}
+          <td>{{$entry}}</td>
+          {{ end }}
+        </tr>
+        {{ end }}
+      </table>
+    </div>
+    <span class="clock">
+      <span class="hour">00</span>
+      :
+      <span class="minute">00</span>
+      :
+      <span class="second">00</span>
+      <span class="date"></span>
+    </span>
+    <script src="/static/js/clock.js"></script>
+    <div class="tweets tweetContainer2"></div>
+  </div>
 </div>
 {{end}}
 

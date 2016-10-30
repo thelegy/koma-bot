@@ -2,40 +2,36 @@
 <html>
   <head>
     <title>KoMa Wall</title>
-    <link rel="stylesheet" href="/static/css/pure/base-min.css">
-    <link rel="stylesheet" href="/static/css/pure/grids-min.css">
-    <link rel="stylesheet" href="/static/css/pure/grids-responsive-min.css">
-    <link rel="stylesheet" href="/static/css/pure/menus-min.css">
-    <link rel="stylesheet" href="/static/css/pure/tables-min.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="/static/css/style.css">
     <script src="/static/js/settings.js"></script>
     {{template "additionalHeaders"}}
   </head>
   <body>
-    <nav class="pure-menu pure-menu-horizontal pure-menu-fixed pure-g">
-      <div class="pure-u-1-2">
-        <a href="javascript:updateViewport(); document.activeElement.blur();" class="pure-menu-heading">
+    <nav class="grid-12">
+      <div class="col-6">
+        <a class="heading" href="javascript:updateViewport(); document.activeElement.blur();">
           KoMa Twitter Wall
         </a>
       </div>
 
-      <ul class="pure-menu-list pure-u-1-2 info">
+      <ul class="col-6">
 
-        <li class="pure-menu-item">
-          {{ if .Version.GitHash }}
-          <a class="pure-menu-link git-version" target="_blank" href="https://github.com/kerwindena/koma-bot/tree/{{ .Version.GitHash }}">
+        {{ if .Version.GitHash }}
+        <li>
+          <a class="git-version" target="_blank" href="https://github.com/kerwindena/koma-bot/tree/{{ .Version.GitHash }}">
             {{ if .Version.GitBranch }}
             {{ .Version.GitBranch }}
             {{ else }}
             {{ .Version.GitHash }}
             {{ end }}
           </a>
-          {{ end }}
         </li>
+        {{ end }}
 
-        <li class="pure-menu-item">
-          {{ if .Version.TravisId }}
-          <a class="pure-menu-link travis-version" target="_blank" href="https://travis-ci.org/kerwindena/koma-bot/builds/{{ .Version.TravisId }}">
+        {{ if .Version.TravisId }}
+        <li>
+          <a class="travis-version" target="_blank" href="https://travis-ci.org/kerwindena/koma-bot/builds/{{ .Version.TravisId }}">
             Travis
             {{ if .Version.TravisNumber }}
             #{{ .Version.TravisNumber }}
@@ -43,14 +39,14 @@
             {{ .Version.TravisId }}
             {{ end }}
           </a>
-          {{ end }}
         </li>
+        {{ end }}
 
-        <li class="pure-menu-item pure-menu-has-children">
-          <a onclick="toggle_settings()" class="pure-menu-link settings-button">
+        <li>
+          <a onclick="toggle_settings()" class="settings-button">
             <span></span>
           </a>
-          <div class="pure-menu-children settings-box">
+          <div class="settings-box">
             <span class="heading">Settings</span>
             <div class="volume">
               <span>Volume</span>
@@ -71,7 +67,7 @@
       </ul>
 
     </nav>
-    <div class="content pure-g">
+    <div class="content">
       {{template "content" .TimetableInfo}}
     </div>
     <div class="foot-anchor"></div>
