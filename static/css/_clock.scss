@@ -21,7 +21,8 @@
   &::after {
     border-top: 1px solid #{$borderColor};
     content: " ";
-    position: absolute;
+    position: fixed;
+    margin-top: -1px;
     display: block;
     background: linear-gradient(#{$backgroundColor}, transparent);
     height: 5px;
