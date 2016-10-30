@@ -40,6 +40,18 @@ nav {
       height: 100%;
       opacity: .3;
       padding: #{$padding};
+      display: block;
+      color: white;
+      text-decoration: none;
+      font-weight: bold;
+
+      &.git-version {
+        background-image: url("/static/image/GitHub-Mark-Light-32px.png");
+        background-repeat: no-repeat;
+        background-size: 20px auto;
+        background-position: 0px 50%;
+        padding-left: 24px;
+      }
     }
 
     a:hover {
