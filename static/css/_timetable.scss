@@ -1,0 +1,55 @@
+.timetable {
+  margin: 0 5px;
+  background-color: #{$tweetBackgroundColor};
+
+  table {
+    width: 100%;
+    text-align: left;
+    font-size: 0pt;
+    border-spacing: 0px;
+
+    /* add padding to top and bottom but creates gap */
+    padding: 10px 0px;
+
+    /* close the gap but create offset */
+    margin-top: -20px;
+
+    tr.active td {
+      /* padding for all active rows to remove the offset */
+      padding-top: 24px;
+    }
+
+    tr.active ~ tr.active td {
+      /* remove padding for all active rows after the first one */
+      padding-top: 4px;
+    }
+
+    tr,
+    td {
+      transition: all 2s;
+      font-size: inherit;
+    }
+
+    .name {
+      white-space: nowrap;
+      font-weight: bold;
+      width: 0px;
+    }
+
+    td {
+      opacity: inherit;
+      padding: 0px;
+    }
+
+    .active {
+      font-size: 11pt;
+      opacity: 1;
+      td {
+        padding: 4px;
+        &:nth-child(2) {
+          padding-left: 10px;
+        }
+      }
+    }
+  }
+}
