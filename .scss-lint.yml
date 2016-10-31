@@ -1,7 +1,13 @@
 linters:
 
+  LeadingZero:
+    style: exclude_zero
+
   NameFormat:
     convention: camel_case
 
   SelectorDepth:
     max_depth: 3
+
+  StringQuotes:
+    style: double_quotes

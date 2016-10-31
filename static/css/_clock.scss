@@ -1,48 +1,47 @@
 .clock {
-  position: relative;
+  background-color: #{$backgroundColor};
+  color: #{$borderColor};
   display: inline-block;
+  font-size: 55pt;
+  position: relative;
+  top: -1px;
   width: 100%;
   z-index: 2;
-  background-color: #{$backgroundColor};
-  font-size: 55pt;
-  color: #{$borderColor};
+
+  &::before,
+  &::after {
+    content: " ";
+    display: block;
+    height: 5px;
+    position: fixed;
+    width: 100%;
+  }
 
   &::before {
-    content: " ";
-    position: absolute;
-    display: block;
     background: linear-gradient(transparent, #{$backgroundColor});
-    margin-top: -5px;
-    height: 5px;
-    width: 100%;
     border-bottom: 1px solid #{$borderColor};
+    margin-top: -5px;
   }
 
   &::after {
-    border-top: 1px solid #{$borderColor};
-    content: " ";
-    position: fixed;
-    margin-top: -1px;
-    display: block;
     background: linear-gradient(#{$backgroundColor}, transparent);
-    height: 5px;
-    width: 100%
+    border-top: 1px solid #{$borderColor};
+    margin-top: -1px;
   }
 
   span {
-    vertical-align: middle;
-    margin: 0 -.3em;
-    font-weight: bold;
     color: #{$tweetBackgroundColor};
+    font-weight: bold;
+    margin: 0 -.3em;
     position: relative;
-    top: -4px
+    vertical-align: middle;
   }
 
   .date {
     display: block;
     font-size: 12pt;
-    margin-top: -14px;
     margin-bottom: 5px;
+    margin-top: -14px;
   }
 
 }
