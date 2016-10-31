@@ -92,7 +92,7 @@ function formatTimeDiff(time, format, date) {
             return format.day.before + time + format.day.after;
         }
 
-    return (date.getYear() - 100) + '/' + date.getMonth() + '/' + date.getDate();
+    return (date.getYear() - 100) + '/' + (date.getMonth()+1) + '/' + date.getDate();
 
 }
 
