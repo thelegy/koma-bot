@@ -48,7 +48,7 @@ function formatDate(time) {
         break;
     }
     date += ", " + dateFormat.querySelector(".the").textContent + " "
-    date +=(time.getYear() - 100) + '/' + time.getMonth() + '/' + time.getDate();
+    date +=(time.getYear() - 100) + '/' + (time.getMonth()+1) + '/' + time.getDate();
     return date;
 }
 
