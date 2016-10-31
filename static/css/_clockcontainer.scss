@@ -1,13 +1,11 @@
 .clockcontainer {
-  text-align: center;
   pointer-events: auto;
-  .clock {
-    top: -1px;
-  }
+  text-align: center;
+
   .tweets {
-    position: absolute;
     bottom: 0px;
-    z-index: -1;
+    position: absolute;
     width: 50%;
+    z-index: -1;
   }
 }
