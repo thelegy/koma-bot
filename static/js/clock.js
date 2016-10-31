@@ -96,6 +96,18 @@ function formatTimeDiff(time, format, date) {
 
 }
 
+function activate(elem) {
+    if(!elem.classList.contains("active")) {
+        elem.classList.add("active");
+    }
+}
+
+function deactivate(elem) {
+    if(elem.classList.contains("active")) {
+        elem.classList.remove("active");
+    }
+}
+
 function updateTimetable(time) {
     var rows = document.querySelectorAll(".timetable tr")
 
@@ -105,7 +117,7 @@ function updateTimetable(time) {
             continue;
         }
         if(start_time-time > 3600000) {
-            rows[i].classList.remove("active");
+            deactivate(rows[i]);
             continue;
         }
         var end_time = new Date(rows[i].getAttribute("data-end"));
@@ -113,10 +125,10 @@ function updateTimetable(time) {
             continue;
         }
         if(end_time-time <= 0) {
-            rows[i].classList.remove("active");
+            deactivate(rows[i]);
             continue;
         }
-        rows[i].classList.add("active");
+        activate(rows[i]);
     }
 }
 
