@@ -1,0 +1,7 @@
+linters:
+
+  NameFormat:
+    convention: camel_case
+
+  SelectorDepth:
+    max_depth: 3
