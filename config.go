@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"net/url"
 	"strconv"
+	"strings"
 	"sync"
 	"time"
 
@@ -87,9 +88,17 @@ func (conf *Config) StoreTweet(t Tweet) {
 func (conf *Config) GetTimetableInfo() TimetableInfo {
 	ti := TimetableInfo{}
 	v := conf.configViper.Sub("timetable")
+	keys := make(map[string]bool)
 	for _, key := range v.AllKeys() {
+		keys[strings.Split(key, ".")[0]] = true
+	}
+	for key, _ := range keys {
 		tir := &TimetableInfoRow{}
-		v.UnmarshalKey(key, tir)
+		err := v.UnmarshalKey(key, tir)
+		if err != nil {
+			fmt.Println(err)
+			continue
+		}
 		ti[tir.Start] = *tir
 	}
 	return ti
@@ -118,7 +127,11 @@ func (conf *Config) iterateSounds() <-chan *Sound {
 
 func (conf *Config) updateSounds() {
 	sounds := make(map[string]*Sound)
+	keys := make(map[string]bool)
 	for _, key := range conf.soundViper.AllKeys() {
+		keys[strings.Split(key, ".")[0]] = true
+	}
+	for key, _ := range keys {
 		sound := &Sound{}
 		err := conf.soundViper.UnmarshalKey(key, sound)
 		if err != nil {
