@@ -92,7 +92,7 @@ func (conf *Config) GetTimetableInfo() TimetableInfo {
 	for _, key := range v.AllKeys() {
 		keys[strings.Split(key, ".")[0]] = true
 	}
-	for key, _ := range keys {
+	for key := range keys {
 		tir := &TimetableInfoRow{}
 		err := v.UnmarshalKey(key, tir)
 		if err != nil {
@@ -131,7 +131,7 @@ func (conf *Config) updateSounds() {
 	for _, key := range conf.soundViper.AllKeys() {
 		keys[strings.Split(key, ".")[0]] = true
 	}
-	for key, _ := range keys {
+	for key := range keys {
 		sound := &Sound{}
 		err := conf.soundViper.UnmarshalKey(key, sound)
 		if err != nil {
