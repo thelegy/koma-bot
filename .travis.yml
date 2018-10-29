@@ -12,6 +12,7 @@ services:
 
 before_install:
   - npm install --global sass postcss-cli autoprefixer
+  - go get -d ./...
 
 before_script:
   - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "nested"; fi)
