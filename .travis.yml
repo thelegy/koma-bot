@@ -15,7 +15,7 @@ before_install:
   - go get -d ./...
 
 before_script:
-  - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "nested"; fi)
+  - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "expanded"; fi)
 
 script:
   - ./processSass.sh
