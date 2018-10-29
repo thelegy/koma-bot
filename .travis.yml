@@ -2,18 +2,16 @@ language: go
 
 go:
   - 1.7
+  - 1.8
+  - 1.9
+  - 1.10
+  - 1.11
 
 services:
   - docker
 
 before_install:
-  - gem install sass
-  - npm install --global postcss-cli autoprefixer
-
-env:
-  - global:
-      - DOCKER_USER=kerwindena
-      - REPO=kerwindena/koma-bot
+  - npm install --global sass postcss-cli autoprefixer
 
 before_script:
   - export SASS_STYLE=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "compressed"; else echo "nested"; fi)
@@ -21,25 +19,3 @@ before_script:
 script:
   - ./processSass.sh
   - go test -v ./...
-
-after_success:
-  - test "${TRAVIS_PULL_REQUEST}" = "false" && docker login -e ${DOCKER_EMAIL} -u ${DOCKER_USER} -p "${DOCKER_PASS}"
-  - export TAG=$(if [ "${TRAVIS_BRANCH}" == "master" ]; then echo "latest"; else echo ${TRAVIS_BRANCH}; fi)
-  - export COMMIT=$(git rev-parse --short --verify HEAD)
-  - ./processSass.sh
-  - |
-      CGO_ENABLED=0 GOOS=linux go build \
-        -a -v -o koma-bot -tags netgo \
-        -ldflags "
-          -s
-          -X main._versionAutomaticBuild=t
-          -X main._versionDate=$(date -Iseconds)
-          -X main._versionGitBranch=$(git symbolic-ref HEAD 2>/dev/null|sed 's|^refs/heads/||'||true)
-          -X main._versionGitHash=$(git rev-parse --short --verify HEAD)
-          -X main._versionTravisNumber=${TRAVIS_BUILD_NUMBER}
-          -X main._versionTravisId=${TRAVIS_BUILD_ID}
-          " .
-  - docker build --file=Dockerfile --tag=${REPO}:${COMMIT} .
-  - docker tag ${REPO}:${COMMIT} ${REPO}:${TAG}
-  - docker tag ${REPO}:${COMMIT} ${REPO}:travis-${TRAVIS_BUILD_NUMBER}
-  - test "${TRAVIS_PULL_REQUEST}" = "false" && docker push ${REPO}

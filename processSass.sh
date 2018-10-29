@@ -3,11 +3,9 @@ set -ev
 
 sass \
   --update \
-  --scss \
-  --force \
-  --sourcemap=none \
+  --no-source-map \
   --style "${SASS_STYLE}" \
-  static/css
+  static/css/:static/css
 
 postcss \
   --use autoprefixer \

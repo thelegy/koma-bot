@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kerwindena/koma-bot/sse"
+	"github.com/thelegy/koma-bot/sse"
 )
 
 type Sound struct {

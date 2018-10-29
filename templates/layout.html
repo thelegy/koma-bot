@@ -19,24 +19,11 @@
 
         {{ if .Version.GitHash }}
         <li>
-          <a class="git-version" target="_blank" href="https://github.com/kerwindena/koma-bot/tree/{{ .Version.GitHash }}">
+          <a class="git-version" target="_blank" href="https://github.com/thelegy/koma-bot/tree/{{ .Version.GitHash }}">
             {{ if .Version.GitBranch }}
             {{ .Version.GitBranch }}
             {{ else }}
             {{ .Version.GitHash }}
-            {{ end }}
-          </a>
-        </li>
-        {{ end }}
-
-        {{ if .Version.TravisId }}
-        <li>
-          <a class="travis-version" target="_blank" href="https://travis-ci.org/kerwindena/koma-bot/builds/{{ .Version.TravisId }}">
-            Travis
-            {{ if .Version.TravisNumber }}
-            #{{ .Version.TravisNumber }}
-            {{ else }}
-            {{ .Version.TravisId }}
             {{ end }}
           </a>
         </li>

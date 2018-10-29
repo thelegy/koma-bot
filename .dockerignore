@@ -1,1 +1,4 @@
-**/*.scss
+/.dockerignore
+/.hound.yml
+/.travis.yml
+/Dockerfile
