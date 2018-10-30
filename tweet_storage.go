@@ -6,7 +6,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/kerwindena/koma-bot/sse"
+	"github.com/thelegy/koma-bot/sse"
 )
 
 const TweetStorageMaxCapacity = 100

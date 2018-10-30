@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/kerwindena/koma-bot/sse"
+	"github.com/thelegy/koma-bot/sse"
 
 	"net/http"
 	"os"

@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/kerwindena/koma-bot/sse"
+	"github.com/thelegy/koma-bot/sse"
 )
 
 type Sound struct {
@@ -28,7 +28,7 @@ func (s *Sound) GetPosition(t Tweet) [][]int {
 	if s.Retweeted && t.RetweetedStatus == nil {
 		return nil
 	}
-	pos := s.regex.FindAllStringIndex(t.Text, -1)
+	pos := s.regex.FindAllStringIndex(t.FullText, -1)
 	if len(pos) == 0 {
 		return nil
 	}
@@ -36,7 +36,7 @@ func (s *Sound) GetPosition(t Tweet) [][]int {
 }
 
 func tweetSounds(conf *Config, sse sse.Provider, t Tweet) {
-	positions := make([]*Sound, len(t.Text)+1)
+	positions := make([]*Sound, len(t.FullText)+1)
 	for sound := range conf.iterateSounds() {
 		pos := sound.GetPosition(t)
 		for _, p := range pos {

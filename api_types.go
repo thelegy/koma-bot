@@ -102,7 +102,8 @@ type Tweet struct {
 	// Retweeted            bool     `json:"retweeted"`
 	RetweetedStatus *Tweet `json:"retweeted_status"`
 	// Source               string   `json:"source"`
-	Text      string `json:"text"`
+	// Text      string `json:"text"`
+	FullText  string `json:"full_text"`
 	Truncated bool   `json:"truncated"`
 	User      TUser  `json:"user"`
 	// WithheldCopyright    bool     `json:"withheld_copyright"`

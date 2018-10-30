@@ -7,7 +7,7 @@ import (
 	"time"
 
 	"github.com/gin-gonic/gin"
-	"github.com/kerwindena/koma-bot/sse"
+	"github.com/thelegy/koma-bot/sse"
 )
 
 func apiStreamJson(conf *Config, clients <-chan sse.Client) func(c *gin.Context) {
