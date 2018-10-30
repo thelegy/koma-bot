@@ -90,7 +90,7 @@ function createTweet(data) {
     tweet.setAttribute("data-tweetId", data.id);
     tweet.setAttribute("data-tweetDate", data.created_at);
 
-    tweet.querySelector(".message").innerHTML = escapeHtml(data.text);
+    tweet.querySelector(".message").innerHTML = escapeHtml(data.full_text);
 
     var user = tweet.querySelector(".user")
     user.querySelector("a").href = "https://twitter.com/" + data.user.screen_name;
